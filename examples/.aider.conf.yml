@@ -1,0 +1,4 @@
+model: openai/qwen3.8-27b
+openai-api-base: http://127.0.0.1:8000/v1
+openai-api-key: unused
+edit-format: diff

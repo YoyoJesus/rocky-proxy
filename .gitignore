@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+.venv/
+uv.lock
+.env
+.aider*
+!examples/.aider*
