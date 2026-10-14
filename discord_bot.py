@@ -95,6 +95,13 @@ class RockyBot(discord.Client):
         ref = message.reference.resolved if message.reference else None
         return isinstance(ref, discord.Message) and ref.author == self.user
 
+    def missing_permissions(self, message: discord.Message) -> list[str]:
+        if message.guild is None:
+            return []
+        perms = message.channel.permissions_for(message.guild.me)
+        send = "send_messages_in_threads" if isinstance(message.channel, discord.Thread) else "send_messages"
+        return [p for p in ("view_channel", send, "read_message_history") if not getattr(perms, p)]
+
     async def on_message(self, message: discord.Message) -> None:
         if message.author == self.user:
             return
@@ -106,6 +113,9 @@ class RockyBot(discord.Client):
         if message.author.bot and self.bot_streak[channel_id] >= MAX_BOT_TURNS:
             return
         if time.monotonic() < self.ready_at[channel_id] and message.author.bot:
+            return
+        if missing := self.missing_permissions(message):
+            log.warning("Missing %s in #%s (%s), ignoring", ", ".join(missing), message.channel, channel_id)
             return
 
         async with self.locks[channel_id]:
