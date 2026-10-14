@@ -50,7 +50,7 @@ The examples target `qwen3.8-27b`. If Rocky's model changes, check `GET /v1/mode
 
 ## Discord bot
 
-`discord_bot.py` talks to Rocky directly (the proxy is not needed). It replies when mentioned, when someone replies to it, in DMs, and to every message in `BOT_CHANNELS`. The last `BOT_HISTORY` channel messages are sent as context, labeled with each author's name and whether they are a person or a bot.
+`discord_bot.py` talks to Rocky directly (the proxy is not needed). It replies when mentioned, when addressed by name (any word in `BOT_NAMES`, case-insensitive), when someone replies to it, in DMs, and to every message in `BOT_CHANNELS`. The last `BOT_HISTORY` channel messages are sent as context, labeled with each author's name and whether they are a person or a bot.
 
 1. Create an application at the [Discord Developer Portal](https://discord.com/developers/applications), add a bot, and enable the **Message Content** intent.
 2. Invite it with the `bot` scope and the Send Messages and Read Message History permissions.
@@ -61,6 +61,7 @@ The examples target `qwen3.8-27b`. If Rocky's model changes, check `GET /v1/mode
 | ------------------- | ----------------------------------------- |
 | `DISCORD_BOT_TOKEN` | required                                  |
 | `ROCKY_MODEL`       | first model from `GET /v1/models`         |
+| `BOT_NAMES`         | `rocky` (comma-separated, empty disables) |
 | `BOT_CHANNELS`      | none (comma-separated channel IDs)        |
 | `BOT_PERSONA`       | `You are friendly, helpful, and concise.` |
 | `BOT_HISTORY`       | `20` messages                             |

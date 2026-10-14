@@ -17,6 +17,8 @@ ROCKY_KEY = load_secret("ROCKY_API_KEY")
 DISCORD_TOKEN = load_secret("DISCORD_BOT_TOKEN")
 
 CHANNELS = {int(c) for c in os.environ.get("BOT_CHANNELS", "").split(",") if c.strip()}
+NAMES = [n.strip() for n in os.environ.get("BOT_NAMES", "rocky").split(",") if n.strip()]
+NAME_PATTERN = re.compile(rf"\b({'|'.join(map(re.escape, NAMES))})\b", re.IGNORECASE) if NAMES else None
 HISTORY = int(os.environ.get("BOT_HISTORY", "20"))
 MAX_BOT_TURNS = int(os.environ.get("BOT_MAX_BOT_TURNS", "5"))
 COOLDOWN = float(os.environ.get("BOT_COOLDOWN", "5"))
@@ -87,6 +89,8 @@ class RockyBot(discord.Client):
         if isinstance(message.channel, discord.DMChannel) or message.channel.id in CHANNELS:
             return True
         if self.user in message.mentions:
+            return True
+        if NAME_PATTERN and NAME_PATTERN.search(message.content):
             return True
         ref = message.reference.resolved if message.reference else None
         return isinstance(ref, discord.Message) and ref.author == self.user
