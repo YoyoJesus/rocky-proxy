@@ -9,23 +9,10 @@ from typing import Any
 import requests
 from flask import Flask, Response, jsonify, request, stream_with_context
 
-
-def load_key() -> str:
-    if key := os.environ.get("ROCKY_API_KEY"):
-        return key
-    if os.name == "nt":
-        import winreg
-
-        try:
-            with winreg.OpenKey(winreg.HKEY_CURRENT_USER, "Environment") as reg:
-                return winreg.QueryValueEx(reg, "ROCKY_API_KEY")[0]
-        except FileNotFoundError:
-            pass
-    raise SystemExit("ROCKY_API_KEY is not set.")
-
+from secret_env import load_secret
 
 ROCKY_BASE = os.environ.get("ROCKY_BASE", "https://rocky.cs.kent.edu/v1")
-ROCKY_KEY = load_key()
+ROCKY_KEY = load_secret("ROCKY_API_KEY")
 TIMEOUT = 600
 
 PARAM_MAP = {

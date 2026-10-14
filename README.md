@@ -48,7 +48,28 @@ aider
 
 The examples target `qwen3.8-27b`. If Rocky's model changes, check `GET /v1/models` and update the model id and limits in both files.
 
+## Discord bot
+
+`discord_bot.py` talks to Rocky directly (the proxy is not needed). It replies when mentioned, when someone replies to it, in DMs, and to every message in `BOT_CHANNELS`. The last `BOT_HISTORY` channel messages are sent as context, labeled with each author's name and whether they are a person or a bot.
+
+1. Create an application at the [Discord Developer Portal](https://discord.com/developers/applications), add a bot, and enable the **Message Content** intent.
+2. Invite it with the `bot` scope and the Send Messages and Read Message History permissions.
+3. Save the token the same way as the Rocky key, as `DISCORD_BOT_TOKEN`.
+4. Run `uv run discord_bot.py`.
+
+| Variable            | Default                                   |
+| ------------------- | ----------------------------------------- |
+| `DISCORD_BOT_TOKEN` | required                                  |
+| `ROCKY_MODEL`       | first model from `GET /v1/models`         |
+| `BOT_CHANNELS`      | none (comma-separated channel IDs)        |
+| `BOT_PERSONA`       | `You are friendly, helpful, and concise.` |
+| `BOT_HISTORY`       | `20` messages                             |
+| `BOT_MAX_BOT_TURNS` | `5` replies to bots before a human speaks |
+| `BOT_COOLDOWN`      | `5` seconds per channel                   |
+
+Loop guards: the bot never replies to itself, stops replying to other bots after `BOT_MAX_BOT_TURNS` in a row until a human posts, ignores bot messages during the cooldown, and backs off for Rocky's rate-limit reset time on errors. Mentions in model output are disabled so it cannot ping `@everyone` or roles.
+
 ## Notes
 
-- Rocky logs all requests and rate limits each key. Check your course policy before running agent loops.
+- Rocky logs all requests and rate limits each key. Check your course policy before running agent loops or exposing the bot to a public server, since other people's messages are sent under your key.
 - Rocky errors are passed through unchanged, and the proxy logs Rocky's `x-request-id` for troubleshooting.
