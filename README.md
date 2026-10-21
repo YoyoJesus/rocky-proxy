@@ -70,6 +70,59 @@ The examples target `qwen3.8-27b`. If Rocky's model changes, check `GET /v1/mode
 
 Loop guards: the bot never replies to itself, stops replying to other bots after `BOT_MAX_BOT_TURNS` in a row until a human posts, ignores bot messages during the cooldown, and backs off for Rocky's rate-limit reset time on errors. Mentions in model output are disabled so it cannot ping `@everyone` or roles.
 
+## Kent State CS and HacKSU knowledge
+
+The Discord bot searches a local SQLite full-text index before asking Rocky to answer. It sends
+matching excerpts with source links and fetch dates alongside the conversation. No embeddings,
+extra API key, external database, or model tool calling is needed.
+The initial sources cover the CS department and catalog, HacKSU, Kent Hack Enough (`khe.io`),
+and Kent Hack It (`ctf.hacksu.com`), including its public Kali setup guide.
+It also includes HacKSU's GitHub organization and selected public repository READMEs for
+club/event websites, lessons and workshop slides.
+
+From the repository root, import the public pages in `knowledge/sources.json`:
+
+```powershell
+uv run knowledge_base.py refresh
+uv run knowledge_base.py status
+uv run knowledge_base.py search "HacKSU meetings"
+uv run discord_bot.py
+```
+
+Add public HTML or plain-text Markdown URLs to [knowledge/sources.json](knowledge/sources.json), or write curated
+Markdown notes under [knowledge/](knowledge/README.md), then refresh again. Only explicitly
+listed web pages are fetched; linked pages are not crawled. Source selection notes are in
+[knowledge/SOURCES.md](knowledge/SOURCES.md). The generated `data/knowledge.sqlite3` stays local
+and is ignored by Git. Importing knowledge does not need Discord or Rocky credentials.
+Kent State, HacKSU (including subdomains), `khe.io`, GitHub and GitHub raw-file hosts are allowed
+by default. For another trusted public host, pass
+`--allow-host example.org` on refresh or set `KNOWLEDGE_ALLOWED_HOSTS` to a comma-separated list.
+Each redirect must also remain on an allowed public HTTPS host.
+
+Refresh downloads snapshots; the bot does not browse live. Run refresh periodically (for example,
+daily before starting the bot), especially around meeting changes and registration. A failed
+download preserves the last good indexed version. Review refresh output for failures and check
+fetch dates with `status`. No scheduled task is installed. The bot reads the database on each
+answer, so a refresh does not require a restart.
+
+| Variable | Default | Purpose |
+| --- | --- | --- |
+| `BOT_KNOWLEDGE_DB` | `data/knowledge.sqlite3` beside the bot script | Database to search |
+| `BOT_KNOWLEDGE_LIMIT` | `5` | Maximum matching excerpts; `0` disables retrieval |
+| `BOT_KNOWLEDGE_MAX_CHARS` | `12000` | Maximum reference context characters |
+
+The importer accepts `--db`, `--sources`, and `--knowledge-dir` overrides on `refresh`;
+`search` and `status` accept `--db`. If you use a custom database, configure the bot to use the
+same path. On Windows, `tzdata` supplies the Eastern time zone used for date-aware instructions.
+
+The bot is instructed to cite sources, distinguish past events and catalog years, and acknowledge
+missing information. Keyword retrieval can miss paraphrases, and citations and answer accuracy
+still depend on the model. Try representative questions with `search` when adding sources.
+Public knowledge is shared across all bot conversations: private Discord messages and channel
+archives are not imported. Only add information suitable for that audience.
+
+Run offline checks with `uv run python -m unittest discover -s tests -v`.
+
 ## Notes
 
 - Rocky logs all requests and rate limits each key. Check your course policy before running agent loops or exposing the bot to a public server, since other people's messages are sent under your key.

@@ -1,0 +1,142 @@
+[
+  {
+    "url": "https://www.kent.edu/cs",
+    "title": "Computer Science Department Overview - Kent State University"
+  },
+  {
+    "url": "https://www.kent.edu/cs/computer-science-advising",
+    "title": "Academic Advising for Undergraduates - Kent State CS"
+  },
+  {
+    "url": "https://www.kent.edu/cs/academic-advising-graduate-students",
+    "title": "Academic Advising for Graduate Students - Kent State CS"
+  },
+  {
+    "url": "https://www.kent.edu/cs/tutoring-undergraduate-cs-courses",
+    "title": "Tutoring for Undergraduate CS Courses - Kent State CS"
+  },
+  {
+    "url": "https://www.kent.edu/cs/faculty-office-hours",
+    "title": "Faculty Office Hours Directory - Kent State CS"
+  },
+  {
+    "url": "https://www.kent.edu/cs/faculty-staff",
+    "title": "Faculty and Staff Directory - Kent State CS"
+  },
+  {
+    "url": "https://www.kent.edu/cs/faq",
+    "title": "Frequently Asked Questions (FAQ) - Kent State CS"
+  },
+  {
+    "url": "https://www.kent.edu/cs/contact-information",
+    "title": "Department Contact & Location Information - Kent State CS"
+  },
+  {
+    "url": "https://www.kent.edu/cs/students",
+    "title": "Student Resources Overview - Kent State CS"
+  },
+  {
+    "url": "https://www.kent.edu/cs/women-computer-science",
+    "title": "Women in Computer Science (ACM-W Chapter) - Kent State CS"
+  },
+  {
+    "url": "https://catalog.kent.edu/colleges/sh/cs/",
+    "title": "Department of Computer Science - Kent State University Catalog"
+  },
+  {
+    "url": "https://catalog.kent.edu/colleges/sh/cs/computer-science-bs/",
+    "title": "Computer Science B.S. Degree Requirements - Kent State Catalog"
+  },
+  {
+    "url": "https://catalog.kent.edu/colleges/sh/cs/computer-science-ba/",
+    "title": "Computer Science B.A. Degree Requirements - Kent State Catalog"
+  },
+  {
+    "url": "https://catalog.kent.edu/colleges/sh/cs/computer-science-minor/",
+    "title": "Computer Science Minor Requirements - Kent State Catalog"
+  },
+  {
+    "url": "https://catalog.kent.edu/colleges/sh/cs/computer-science-ms/",
+    "title": "Computer Science M.S. Degree Requirements - Kent State Catalog"
+  },
+  {
+    "url": "https://catalog.kent.edu/colleges/sh/cs/artificial-intelligence-ms/",
+    "title": "Artificial Intelligence M.S. Requirements - Kent State Catalog"
+  },
+  {
+    "url": "https://catalog.kent.edu/colleges/sh/cs/computer-science-phd/",
+    "title": "Computer Science Ph.D. Degree Requirements - Kent State Catalog"
+  },
+  {
+    "url": "https://catalog.kent.edu/coursesaz/cs/",
+    "title": "Computer Science (CS) Course Descriptions - Kent State Catalog"
+  },
+  {
+    "url": "https://hacksu.com",
+    "title": "HacKSU Coding Club Homepage & Meeting Location"
+  },
+  {
+    "url": "https://hacksu.com/leadership",
+    "title": "HacKSU Leadership & Alumni Roster"
+  },
+  {
+    "url": "https://hacksu.com/meetings",
+    "title": "HacKSU Meeting Schedule & Topics Archive"
+  },
+  {
+    "url": "https://hacksu.com/info",
+    "title": "HacKSU Helpful Resources & Department Discord"
+  },
+  {
+    "url": "https://hacksu.com/contact",
+    "title": "HacKSU Contact Information & Community Channels"
+  },
+  {
+    "url": "https://khe.io/",
+    "title": "Kent Hack Enough (KHE) Hackathon - Dates, Location and FAQ"
+  },
+  {
+    "url": "https://ctf.hacksu.com/",
+    "title": "Kent Hack It (KHI) - HacKSU Capture The Flag Competition"
+  },
+  {
+    "url": "https://ctf.hacksu.com/kali-setup-guide",
+    "title": "Kent Hack It - Kali Linux Setup Guide"
+  },
+  {
+    "url": "https://khe.io/guide",
+    "title": "Kent Hack Enough (KHE) - Quickstart Guide to Hackathons"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/hacksu-recant/refs/heads/main/README.md",
+    "title": "HacKSU Website Repository (hacksu-recant) - README and Contribution Setup"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/khe-renaissance/refs/heads/main/README.md",
+    "title": "Kent Hack Enough Website Repository (khe-renaissance) - README"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/kent-hack-it/refs/heads/main/README.md",
+    "title": "Kent Hack It CTF Website Repository - README and Architecture (kent-hack-it)"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/flask-colorpicker/refs/heads/main/README.md",
+    "title": "HacKSU Flask Color Picker Workshop - Python Web Development Lesson (flask-colorpicker)"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/fastapi-gemini_wrapper/refs/heads/main/README.md",
+    "title": "HacKSU FastAPI Gemini Wrapper Workshop - AI Chatbot Lesson (fastapi-gemini_wrapper)"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/pokemongo/refs/heads/main/README.md",
+    "title": "HacKSU Pokemon MongoDB Workshop - Database Lesson (pokemongo)"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/effective-ai-lesson/refs/heads/main/README.md",
+    "title": "HacKSU Effective AI Workshop - Lesson Notes (effective-ai-lesson)"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/HacKSU-Presentation-Template/refs/heads/main/README.md",
+    "title": "HacKSU Presentation Template - Creating Workshop Slides (HacKSU-Presentation-Template)"
+  }
+]

@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "Local OpenAI Chat Completions proxy and Discord bot for Kent State's Rocky API"
 readme = "README.md"
 requires-python = ">=3.13"
-dependencies = ["flask>=3.1", "requests>=2.32", "discord.py>=2.6"]
+dependencies = ["flask>=3.1", "requests>=2.32", "discord.py>=2.6", "tzdata>=2025.1"]
 
 [tool.ruff]
 line-length = 120
