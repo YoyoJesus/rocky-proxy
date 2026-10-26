@@ -75,7 +75,7 @@ Loop guards: the bot never replies to itself, stops replying to other bots after
 The Discord bot searches a local SQLite full-text index before asking Rocky to answer. It sends
 matching excerpts with source links and fetch dates alongside the conversation. No embeddings,
 extra API key, external database, or model tool calling is needed.
-The initial sources cover the CS department and catalog, HacKSU, Kent Hack Enough (`khe.io`),
+The initial sources cover the CS department and catalog, faculty and staff profiles, HacKSU, Kent Hack Enough (`khe.io`),
 and Kent Hack It (`ctf.hacksu.com`), including its public Kali setup guide.
 It also includes HacKSU's GitHub organization and selected public repository READMEs for
 club/event websites, lessons and workshop slides.

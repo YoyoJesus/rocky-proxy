@@ -7,6 +7,13 @@ HacKSU club pages, Kent Hack Enough (`khe.io`), and Kent Hack It (`ctf.hacksu.co
 ## Canonical sources
 
 - Department advising, tutoring, faculty/office hours, contact information and FAQs: `www.kent.edu/cs`.
+- Faculty and staff: every page of the `/cs/faculty-staff` directory, each linked profile page, and
+  personal faculty websites on `cs.kent.edu` and `personal.kent.edu` hosts that load over HTTPS. Added October 26, 2026.
+  Most profile pages only list title, office, contact and education; fuller bios and research descriptions
+  come from personal sites, which some faculty no longer update. Skipped sites: those returning 403
+  (Melton, Guo), off-campus hosts (Kwangtaek Kim's Google Site, raifulhasan.com), an HTTP-only redirect
+  (Nesterenko), a host resolving to a private address (Bhati) and a page without readable text (Sharma).
+  New faculty are not added automatically; recheck the directory each semester.
 - Course descriptions and degree requirements: `catalog.kent.edu`, currently under `/colleges/sh/cs/`.
   Legacy `/colleges/as/cs/` URLs may no longer work. Requirements depend on a student's catalog year;
   these URLs track the current catalog, not every historical catalog.
