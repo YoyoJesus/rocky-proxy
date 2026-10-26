@@ -7,6 +7,7 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
@@ -228,6 +229,18 @@ class ChunkingTests(unittest.TestCase):
         text = "# H\n\n" + " ".join(f"w{i}" for i in range(500))
         joined = " ".join(body for _, body in kb.chunk_text(text, 200))
         self.assertEqual(joined.split(), [f"w{i}" for i in range(500)])
+
+    def test_split_table_repeats_header(self):
+        header = "Course | Section | Instructor"
+        rows = "\n".join(f"CS {10000 + i} | 00{i % 9} | Person {i}" for i in range(60))
+        chunks = kb.chunk_text(f"# Schedule\n\n{header}\n\n{rows}", 300)
+        self.assertGreater(len(chunks), 2)
+        for _, body in chunks:
+            self.assertTrue(body.startswith(header + "\n"), body[:60])
+            self.assertEqual(body.count(header), 1)
+            self.assertLessEqual(len(body), 300)
+        joined = [line for _, body in chunks for line in body.split("\n")[1:]]
+        self.assertEqual(joined, rows.split("\n"))
 
     def test_empty_sections_skipped(self):
         self.assertEqual(kb.chunk_text("# Only heading\n\n## Another\n"), [])
@@ -573,6 +586,18 @@ class CatalogRetrievalTests(TempDirCase):
         self.assertTrue(all("CS 23001" in r.heading for r in results), [r.heading for r in results])
         self.assertIn("CS 13001 with a minimum grade of C", results[0].text)
 
+    def test_other_documents_mentioning_code_fill_remaining_slots(self):
+        schedule = "<body><table><tr><th>Course</th><th>Instructor</th></tr><tr><td>CS 23001</td><td>Jane Doe</td></tr></table></body>"
+        pages = {"https://kent.edu/catalog/cs": CATALOG, "https://kent.edu/schedule": schedule}
+        fetcher = lambda url, hosts: kb.FetchedPage(url, "text/html", pages[url])  # noqa: E731
+        manifest = '[{"url": "https://kent.edu/catalog/cs", "title": "Catalog"}, {"url": "https://kent.edu/schedule", "title": "Schedule"}]'
+        self.refresh(fetcher, manifest)
+        results = kb.search_chunks("Who teaches CS 23001?", self.db)
+        self.assertIn("CS 23001", results[0].heading)
+        self.assertIn("Jane Doe", [r.text for r in results if r.title == "Schedule"][0])
+        catalog = [r for r in results if r.title == "Catalog"]
+        self.assertTrue(all("CS 23001" in r.heading for r in catalog), [r.heading for r in catalog])
+
     def test_code_only_in_body_still_found_but_unknown_code_is_not(self):
         self.refresh(html_fetcher(CATALOG), '[{"url": "https://kent.edu/catalog/cs", "title": "CS Catalog"}]')
         headings = [r.heading for r in kb.search_chunks("prerequisite MATH 12002", self.db)]
@@ -604,6 +629,24 @@ class UrlSafetyTests(unittest.TestCase):
         for url in ("https://evilgithub.com/", "https://github.com.evil.com/", "https://gist.githubusercontent.com/x"):
             with self.subTest(url=url), self.assertRaises(kb.FetchError):
                 kb.validate_url(url, kb.DEFAULT_ALLOWED_HOSTS, public_resolver)
+
+    def test_private_hosts_exception_is_exact_and_lan_only(self):
+        def resolver_for(address):
+            return lambda host, port, **kwargs: [(socket.AF_INET, socket.SOCK_STREAM, 6, "", (address, port))]
+
+        url = "https://web.cs.kent.edu/schedule"
+        self.assertEqual(kb.validate_url(url, HOSTS, resolver_for("10.32.7.27")), url)
+        for address in ("127.0.0.1", "169.254.169.254", "0.0.0.0"):
+            with self.subTest(address=address), self.assertRaises(kb.FetchError):
+                kb.validate_url(url, HOSTS, resolver_for(address))
+        for other in ("https://www.kent.edu/", "https://x.web.cs.kent.edu/", "https://cs.kent.edu/"):
+            with self.subTest(url=other), self.assertRaises(kb.FetchError):
+                kb.validate_url(other, HOSTS, private_resolver)
+
+    def test_private_hosts_from_env(self):
+        with patch.dict(os.environ, {kb.PRIVATE_HOSTS_ENV: "intranet.kent.edu"}):
+            kb.validate_url("https://intranet.kent.edu/", HOSTS, private_resolver)
+            self.assertIn("web.cs.kent.edu", kb.configured_private_hosts())
 
     def test_rejections(self):
         bad = [

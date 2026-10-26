@@ -35,11 +35,14 @@ DEFAULT_SOURCES = "knowledge/sources.json"
 DEFAULT_KNOWLEDGE_DIR = "knowledge"
 DEFAULT_ALLOWED_HOSTS = ("kent.edu", "hacksu.com", "khe.io", "github.com", "raw.githubusercontent.com")
 ALLOWED_HOSTS_ENV = "KNOWLEDGE_ALLOWED_HOSTS"
+# Exact hostnames that only resolve on Kent State's network; they may use private LAN addresses.
+DEFAULT_PRIVATE_HOSTS = ("web.cs.kent.edu",)
+PRIVATE_HOSTS_ENV = "KNOWLEDGE_PRIVATE_HOSTS"
 
-CHUNK_VERSION = 2
+CHUNK_VERSION = 3
 CHUNK_MAX_CHARS = 1200
 MAX_CHUNKS_PER_DOC = 500
-MAX_SOURCES = 200
+MAX_SOURCES = 400
 MAX_FILE_BYTES = 1_000_000
 MAX_FETCH_BYTES = 2_000_000
 FETCH_TIMEOUT = (5, 15)
@@ -298,11 +301,22 @@ def _pack(units: Iterable[str], sep: str, limit: int) -> list[str]:
 
 
 def _section_chunks(lines: list[str], limit: int) -> list[str]:
+    """Pack paragraphs into chunks. A one-line table header is repeated on every chunk of the rows below it."""
     units: list[str] = []
+    header = ""
     for para in re.split(r"\n[ \t]*\n", "\n".join(lines)):
         para = "\n".join(line.rstrip() for line in para.strip().split("\n"))
         if not para:
             continue
+        rows = para.split("\n")
+        if header and all(row.count("|") == header.count("|") for row in rows):
+            room = limit - len(header) - 1
+            units.pop()
+            wrapped = [piece for row in rows for piece in _hard_wrap(row, room)]
+            units.extend(f"{header}\n{piece}" for piece in _pack(wrapped, "\n", room))
+            header = ""
+            continue
+        header = para if len(rows) == 1 and " | " in para and len(para) <= limit // 2 else ""
         if len(para) <= limit:
             units.append(para)
         else:
@@ -566,8 +580,26 @@ def configured_allowed_hosts(extra: Iterable[str] = ()) -> tuple[str, ...]:
     return tuple(dict.fromkeys(h for h in hosts if h))
 
 
+def configured_private_hosts() -> tuple[str, ...]:
+    env = os.environ.get(PRIVATE_HOSTS_ENV, "").split(",")
+    hosts = [h.strip().lower().strip(".") for h in (*DEFAULT_PRIVATE_HOSTS, *env)]
+    return tuple(dict.fromkeys(h for h in hosts if h))
+
+
+def _allowed_address(address: str, private_ok: bool) -> bool:
+    try:
+        ip = ipaddress.ip_address(address.split("%")[0])
+    except ValueError:
+        return False
+    if ip.is_global:
+        return True
+    return private_ok and ip.is_private and not (ip.is_loopback or ip.is_link_local or ip.is_unspecified)
+
+
 def validate_url(url: str, allowed_hosts: Sequence[str], resolver: Resolver = socket.getaddrinfo) -> str:
     """Check that url is a plain HTTPS URL on an allowlisted host that resolves only to public addresses.
+
+    Hosts listed exactly in configured_private_hosts() may also resolve to private LAN addresses.
 
     Returns the URL without its fragment. Raises FetchError otherwise.
     """
@@ -597,13 +629,9 @@ def validate_url(url: str, allowed_hosts: Sequence[str], resolver: Resolver = so
         raise FetchError(f"DNS lookup failed: {exc}") from exc
     if not addresses:
         raise FetchError("host did not resolve")
-    for address in addresses:
-        try:
-            public = ipaddress.ip_address(address.split("%")[0]).is_global
-        except ValueError:
-            public = False
-        if not public:
-            raise FetchError("host resolves to a non-public address")
+    private_ok = host in configured_private_hosts()
+    if not all(_allowed_address(address, private_ok) for address in addresses):
+        raise FetchError("host resolves to a non-public address")
     return urlunsplit((parts.scheme, parts.netloc, parts.path or "/", parts.query, ""))
 
 
@@ -892,7 +920,9 @@ def search_chunks(query: str, db_path: str | Path, *, limit: int = 5) -> list[Se
         return []
     full = " OR ".join(terms)
     # Explicit course codes must be evidenced: first in a title/heading (the course itself), then anywhere in
-    # the text. Without evidence nothing is returned rather than falling back to generic matches.
+    # the text. Without evidence nothing is returned rather than falling back to generic matches. Body matches
+    # only fill remaining slots from documents the heading pass did not return (e.g. a schedule table), so other
+    # catalog entries that merely mention the course do not crowd out the course itself.
     if code_terms:
         codes = " OR ".join(code_terms)
         matches = [f"({full}) AND {{title heading}} : ({codes})", f"({full}) AND {{codes}} : ({codes})"]
@@ -907,9 +937,12 @@ def search_chunks(query: str, db_path: str | Path, *, limit: int = 5) -> list[Se
     results: list[SearchResult] = []
     with closing(_open_for_read(path)) as conn:
         for match in matches:
+            if len(results) >= limit:
+                break
+            earlier = {r.doc_id for r in results}
             per_doc: dict[str, int] = {}
             for row in conn.execute(sql, (*BM25_WEIGHTS, match, MAX_CANDIDATES)):
-                if per_doc.get(row["doc_id"], 0) >= MAX_CHUNKS_PER_DOC_IN_RESULTS:
+                if row["doc_id"] in earlier or per_doc.get(row["doc_id"], 0) >= MAX_CHUNKS_PER_DOC_IN_RESULTS:
                     continue
                 per_doc[row["doc_id"]] = per_doc.get(row["doc_id"], 0) + 1
                 results.append(
@@ -920,8 +953,6 @@ def search_chunks(query: str, db_path: str | Path, *, limit: int = 5) -> list[Se
                 )  # fmt: skip
                 if len(results) >= limit:
                     break
-            if results:
-                break
     return results
 
 
