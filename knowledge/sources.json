@@ -272,6 +272,10 @@
     "title": "Xiang Lian Personal Faculty Website - Kent State CS"
   },
   {
+    "url": "https://web.cs.kent.edu/~dbhati/",
+    "title": "Deepshikha Bhati Personal Faculty Website - Kent State CS"
+  },
+  {
     "url": "https://www.kent.edu/cs/faq",
     "title": "Frequently Asked Questions (FAQ) - Kent State CS"
   },
@@ -318,6 +322,10 @@
   {
     "url": "https://catalog.kent.edu/coursesaz/cs/",
     "title": "Computer Science (CS) Course Descriptions - Kent State Catalog"
+  },
+  {
+    "url": "https://web.cs.kent.edu/schedule/",
+    "title": "CS Class Schedule (sections, times, instructors, rooms, enrollment) - Kent State CS"
   },
   {
     "url": "https://hacksu.com",
@@ -386,5 +394,517 @@
   {
     "url": "https://raw.githubusercontent.com/hacksu/HacKSU-Presentation-Template/refs/heads/main/README.md",
     "title": "HacKSU Presentation Template - Creating Workshop Slides (HacKSU-Presentation-Template)"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/2017-kenthackenough-ui-main/refs/heads/develop/README.md",
+    "title": "HacKSU 2017-kenthackenough-ui-main repository README (archived, last updated 2017) - The attendee facing website for Kent Hack Enough 2017"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/2018-kenthackenough-ui-main/refs/heads/master/README.md",
+    "title": "HacKSU 2018-kenthackenough-ui-main repository README (archived, last updated 2018)"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/android-calc_tutorial/refs/heads/master/README.md",
+    "title": "HacKSU android-calc_tutorial repository README (last updated 2017) - A simple android calculator example. Source code and lesson materials courtesy of Hyland Software Hy-Tech club. Used with permissio"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/Angular2-Example/refs/heads/master/readme.md",
+    "title": "HacKSU Angular2-Example repository README (last updated 2016) - A project to show how to use Angular 2 Beta"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/angular2-spotify/refs/heads/master/README.md",
+    "title": "HacKSU angular2-spotify repository README (last updated 2017) - A simple Angular 2 project written in Dart for HacKSU's 2/7/2017 meeting."
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/angularlesson/refs/heads/master/README.md",
+    "title": "HacKSU angularlesson repository README (last updated 2023) - A lesson on basic Angular!"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/AngularLesson11-17/refs/heads/main/README.md",
+    "title": "HacKSU AngularLesson11-17 repository README (last updated 2020) - This is the repo for the HacKSU lesson on 11/17"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/April-Fools-2025/refs/heads/main/README.md",
+    "title": "HacKSU April-Fools-2025 repository README (last updated 2025)"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/Arduino-Dimmer/refs/heads/master/README.md",
+    "title": "HacKSU Arduino-Dimmer repository README (last updated 2018) - Sometimes we just want to make a circuit"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/Availability/refs/heads/master/readme.md",
+    "title": "HacKSU Availability repository README (last updated 2016) - This project demonstrates the use of Flask to produce a JSON API"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/bash-lesson/refs/heads/master/README.md",
+    "title": "HacKSU bash-lesson repository README (last updated 2019) - Resources for a lesson on Bash."
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/bash-scripting/refs/heads/master/README.md",
+    "title": "HacKSU bash-scripting repository README (last updated 2022) - A lesson on that basics of bash and scripting"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/basicjs/refs/heads/master/README.md",
+    "title": "HacKSU basicjs repository README (last updated 2015) - A quick intro to Javascript tutorial explaining basic programming concepts like comments, variables, control flow (if/then and for loops), and fu"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/bingo/refs/heads/main/README.md",
+    "title": "HacKSU bingo repository README (last updated 2026) - Webpage for HacKSU bingo semester events, serves as a way to draw and retain club membership"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/Capture-the-Flag/refs/heads/main/README.md",
+    "title": "HacKSU Capture-the-Flag repository README (last updated 2024)"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/chessboardjs/refs/heads/master/README.md",
+    "title": "HacKSU chessboardjs repository README (last updated 2018) - Tutorial on getting started with chessboard.js"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/Chrome-Extensions-Lesson/refs/heads/main/readme.md",
+    "title": "HacKSU Chrome-Extensions-Lesson repository README (last updated 2024) - Introductory Lesson to Chrome Extensions (Manifest v3)"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/ChromeExtensionExample/refs/heads/master/readme.md",
+    "title": "HacKSU ChromeExtensionExample repository README (last updated 2016)"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/conquer-the-world-with-n8n/refs/heads/main/README.md",
+    "title": "HacKSU conquer-the-world-with-n8n repository README (last updated 2026) - HacKSU Lesson teaching students about n8n and the power it holds"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/constitution/refs/heads/main/README.md",
+    "title": "HacKSU constitution repository README (last updated 2026)"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/CS-and-the-Medical-Field/refs/heads/main/README.md",
+    "title": "HacKSU CS-and-the-Medical-Field repository README (last updated 2024)"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/CSharp-Interfaces/refs/heads/main/README.md",
+    "title": "HacKSU CSharp-Interfaces repository README (last updated 2021) - An introduction to graphic user interfaces (GUIs) in the C# programming language."
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/css-examples/refs/heads/master/README.md",
+    "title": "HacKSU css-examples repository README (last updated 2012) - Repository to hold basic CSS examples."
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/CSS_Art/refs/heads/master/README.md",
+    "title": "HacKSU CSS_Art repository README (last updated 2020) - This is for HacktoberFest! Hacker can pick between a few repositories to create some awesome code to contribute to something great!"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/CSS_Art_Lesson/refs/heads/master/README.md",
+    "title": "HacKSU CSS_Art_Lesson repository README (last updated 2020) - This is a lesson about how to create art strictly using CSS!"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/cssanimations/refs/heads/master/README.md",
+    "title": "HacKSU cssanimations repository README (last updated 2015) - CSS Animations and Explanations of CSS and CSS3 from our meeting on 1/27/15."
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/debugging-lesson/refs/heads/master/README.md",
+    "title": "HacKSU debugging-lesson repository README (last updated 2021) - Learn debugging skills!"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/digitalocean-deploy/refs/heads/main/README.md",
+    "title": "HacKSU digitalocean-deploy repository README (last updated 2022)"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/discord.js-bot/refs/heads/master/README.md",
+    "title": "HacKSU discord.js-bot repository README (last updated 2021)"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/django-examples/refs/heads/master/README.md",
+    "title": "HacKSU django-examples repository README (last updated 2025) - A tutorial to get started with Django."
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/docker-tutorial/refs/heads/main/README.md",
+    "title": "HacKSU docker-tutorial repository README (last updated 2024) - This is a basic tutorial for everything related to docker. From pulling images from the web to creating your own images with Dockerfiles,"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/electron-basics/refs/heads/master/README.md",
+    "title": "HacKSU electron-basics repository README (last updated 2018) - Learn the basics of electron with this Slackamole tutorial!"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/elixir-basics/refs/heads/master/README.md",
+    "title": "HacKSU elixir-basics repository README (last updated 2015)"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/email/refs/heads/main/README.md",
+    "title": "HacKSU email repository README (archived, last updated 2021) - HacKSU & KHE Email Service"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/express-guestbook/refs/heads/master/readme.md",
+    "title": "HacKSU express-guestbook repository README (last updated 2026) - A simple example of an Express.js server application."
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/firebase_tutorial/refs/heads/master/README.md",
+    "title": "HacKSU firebase_tutorial repository README (last updated 2018)"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/first-lesson-ai-and-proper-usage/refs/heads/main/README.md",
+    "title": "HacKSU first-lesson-ai-and-proper-usage repository README (last updated 2025) - This is a new introduction lesson that I (Mason) wanted to develop. This lesson talks about AI and the industry and how "
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/Flask-API/refs/heads/master/readme.md",
+    "title": "HacKSU Flask-API repository README (last updated 2016) - A toy API built using flask to demonstrate using it for that purpose"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/flask-guestbook/refs/heads/main/README.md",
+    "title": "HacKSU flask-guestbook repository README (last updated 2024) - Something silly I whipped up as a KHE workshop"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/flask-recipe/refs/heads/master/readme.md",
+    "title": "HacKSU flask-recipe repository README (last updated 2020) - Both a recipe for a simple Flask project and a server to manage recipes"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/flutter-app-lesson/refs/heads/main/README.md",
+    "title": "HacKSU flutter-app-lesson repository README (last updated 2024) - How to make a simple app in Dart with Flutter"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/fossil-record/refs/heads/main/readme.md",
+    "title": "HacKSU fossil-record repository README (last updated 2024) - Wide-ranging lecture on the primordial fossil record of computing."
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/FTH2019/refs/heads/master/README.md",
+    "title": "HacKSU FTH2019 repository README (last updated 2019)"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/gamemaker-studio-2-tutorial/refs/heads/master/README.md",
+    "title": "HacKSU gamemaker-studio-2-tutorial repository README (last updated 2019) - A simple hacksu tutorial on how to set up a gamemaker project!"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/Getting-Started-With-Arduino/refs/heads/main/README.md",
+    "title": "HacKSU Getting-Started-With-Arduino repository README (last updated 2026) - This is a demo for Arduino created by Ian Rohrbacher for HacKSU at Kent State University"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/git_and_gh_pages/refs/heads/main/README.md",
+    "title": "HacKSU git_and_gh_pages repository README (last updated 2023)"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/Github-and-Webdev-Basics/refs/heads/master/README.md",
+    "title": "HacKSU Github-and-Webdev-Basics repository README (last updated 2017) - Tutorial on basic git and webdev"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/GitHub-SourceTree/refs/heads/master/README.md",
+    "title": "HacKSU GitHub-SourceTree repository README (last updated 2020) - GitHub vs. SourceTree"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/github-workshop/refs/heads/main/README.md",
+    "title": "HacKSU github-workshop repository README (last updated 2022) - Repository for the KHE 2021 Github Workshop!"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/go-example/refs/heads/master/readme.md",
+    "title": "HacKSU go-example repository README (last updated 2016)"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/go-intro/refs/heads/master/README.md",
+    "title": "HacKSU go-intro repository README (last updated 2019) - Learning the basics of Go with a basic shopping application"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/godot-tutorial/refs/heads/main/README.md",
+    "title": "HacKSU godot-tutorial repository README (last updated 2025) - A HacKSU Lesson to learn Godot :) This will teach you how to create a video game in Godot using GDScript!"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/google-apis-examples/refs/heads/master/README.md",
+    "title": "HacKSU google-apis-examples repository README (last updated 2012) - Examples of ways to use Google's Maps and Places API"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/Hackathon-Judging-Guide/refs/heads/main/README.md",
+    "title": "HacKSU Hackathon-Judging-Guide repository README (last updated 2026)"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/hacksu-website/refs/heads/master/README.md",
+    "title": "HacKSU hacksu-website repository README (archived, last updated 2025) - The primary HacKSU website."
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/HacksuHacktoberfest/refs/heads/master/README.md",
+    "title": "HacKSU HacksuHacktoberfest repository README (last updated 2020) - Make 5 pull requests in this repo to get a free shirt!"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/hacktoberfest-calculator/refs/heads/master/README.md",
+    "title": "HacKSU hacktoberfest-calculator repository README (last updated 2020) - Create a cool calculator for HacktoberFest!"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/haskell-notes/refs/heads/master/README.md",
+    "title": "HacKSU haskell-notes repository README (last updated 2018)"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/heroku-lesson/refs/heads/master/README.md",
+    "title": "HacKSU heroku-lesson repository README (last updated 2020) - Host your own website for free with heroku!"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/Hotcard/refs/heads/main/README.md",
+    "title": "HacKSU Hotcard repository README (last updated 2026) - Hotcard for HacKSU"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/How-To-Python/refs/heads/main/README.md",
+    "title": "HacKSU How-To-Python repository README (last updated 2023) - How to write a computer program, in Python, for mouse reasons."
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/HTML5APIs-Workshop/refs/heads/master/README.md",
+    "title": "HacKSU HTML5APIs-Workshop repository README (last updated 2013) - Let's take a look at some interesting APIs that are added with the new HTML5 specifications."
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/inbox-checker/refs/heads/main/Readme.md",
+    "title": "HacKSU inbox-checker repository README (last updated 2024) - Checks for emails in the old and creaky GNU Mailman inbox."
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/intro-to-python/refs/heads/main/README.md",
+    "title": "HacKSU intro-to-python repository README (last updated 2026) - Brief Introduction to Python"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/intro-to-rust/refs/heads/main/README.md",
+    "title": "HacKSU intro-to-rust repository README (last updated 2024) - Let's talk about Rust!"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/jquery_and_ajax_tutorial/refs/heads/master/README.md",
+    "title": "HacKSU jquery_and_ajax_tutorial repository README (last updated 2018) - Simple tutorial on Ajax and JQuery"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/JupyterNotebooks-and-Anacoda/refs/heads/main/README.md",
+    "title": "HacKSU JupyterNotebooks-and-Anacoda repository README (last updated 2021) - A lesson about what Jupyter Notebooks and Anaconda can do!"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/Kent-Code-Quick/refs/heads/main/README.md",
+    "title": "HacKSU Kent-Code-Quick repository README (last updated 2026)"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/kenthackenough/refs/heads/master/README.md",
+    "title": "HacKSU kenthackenough repository README (last updated 2023) - The world's best hackathon website."
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/kenthackenough-android/refs/heads/master/README.md",
+    "title": "HacKSU kenthackenough-android repository README (archived, last updated 2015) - KHE Android app"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/kenthackenough-ios/refs/heads/master/readme.md",
+    "title": "HacKSU kenthackenough-ios repository README (archived, last updated 2015) - KHE iOS app."
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/kenthackenough-sponsor/refs/heads/master/README.md",
+    "title": "HacKSU kenthackenough-sponsor repository README (archived, last updated 2018) - Website for sponsorship information and checkout process"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/kenthackenough-ui-2019/refs/heads/master/README.md",
+    "title": "HacKSU kenthackenough-ui-2019 repository README (archived, last updated 2023) - Frontend for khe.io for 2019 🤠🎉"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/kenthackenough-ui-2020/refs/heads/master/README.md",
+    "title": "HacKSU kenthackenough-ui-2020 repository README (archived, last updated 2023)"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/kenthackenough-ui-2021/refs/heads/master/README.md",
+    "title": "HacKSU kenthackenough-ui-2021 repository README (archived, last updated 2021)"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/kenthackenough-ui-main/refs/heads/master/README.md",
+    "title": "HacKSU kenthackenough-ui-main repository README (archived, last updated 2017) - The main part of the Kent Hack Enough website. Change this if you want a new theme."
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/kenthackenough-ui-staff/refs/heads/master/README.md",
+    "title": "HacKSU kenthackenough-ui-staff repository README (archived, last updated 2018) - The is the interface for the hackathon management system part of the Kent Hack Enough website."
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/kenthackenough-web/refs/heads/main/README.md",
+    "title": "HacKSU kenthackenough-web repository README (archived, last updated 2021)"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/khe-2023/refs/heads/main/README.md",
+    "title": "HacKSU khe-2023 repository README (archived, last updated 2023) - 😍 New Kent Hack Enough!"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/khe-frontend/refs/heads/main/README.md",
+    "title": "HacKSU khe-frontend repository README (last updated 2021)"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/khe-revengeance/refs/heads/dev-main/README.md",
+    "title": "HacKSU khe-revengeance repository README (last updated 2025) - The website for KHE staff and attendees used for KHE 2024."
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/khe-ui-template/refs/heads/master/README.md",
+    "title": "HacKSU khe-ui-template repository README (archived, last updated 2018) - Basic skeleton of a KHE site, to be reskinned as needed."
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/large-language-models/refs/heads/main/README.md",
+    "title": "HacKSU large-language-models repository README (last updated 2024)"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/LearnPythonViaTweepy/refs/heads/master/README.md",
+    "title": "HacKSU LearnPythonViaTweepy repository README (last updated 2018) - Walkthrough to learn Python on pythonanywhere.com."
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/LetsMakeMalware/refs/heads/main/README.md",
+    "title": "HacKSU LetsMakeMalware repository README (last updated 2026) - Educational Windows Malware creation through Visual Studio IDE (KSU loves C++)"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/LUIS_HacKSU-in-a-Bottle/refs/heads/master/readme.md",
+    "title": "HacKSU LUIS_HacKSU-in-a-Bottle repository README (last updated 2015) - An example using Luis a natural langauge processing api"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/Mojs_tutorial/refs/heads/master/README.md",
+    "title": "HacKSU Mojs_tutorial repository README (last updated 2018)"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/MyFirstTextEditor/refs/heads/master/README.md",
+    "title": "HacKSU MyFirstTextEditor repository README (last updated 2013) - Time to pick your first text editor!"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/nextcord-bot/refs/heads/master/README.md",
+    "title": "HacKSU nextcord-bot repository README (last updated 2023) - A simple lesson showing how to build a Discord Bot in Python"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/nextcord-bot-advanced/refs/heads/master/README.md",
+    "title": "HacKSU nextcord-bot-advanced repository README (last updated 2022) - A lesson on how to create a Discord Bot in Python with some advanced features."
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/old_khe/refs/heads/main/README.md",
+    "title": "HacKSU old_khe repository README (archived, last updated 2022) - New, rebuilt KHE"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/php-examples/refs/heads/master/README.md",
+    "title": "HacKSU php-examples repository README (last updated 2012) - Basic PHP Tutorials"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/polyglot/refs/heads/main/README.md",
+    "title": "HacKSU polyglot repository README (last updated 2026) - Example of how code and files can be designed to support multiple different file types."
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/Python-Discord-Bot/refs/heads/master/README.md",
+    "title": "HacKSU Python-Discord-Bot repository README (last updated 2020) - This repository will walk you though making a Discord Bot in Python!"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/Python-Tkinter-Intro/refs/heads/master/readme.md",
+    "title": "HacKSU Python-Tkinter-Intro repository README (last updated 2020) - This is a lesson on Tkinter in Python."
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/Python-Tkinter-Pong-Lesson/refs/heads/main/README.md",
+    "title": "HacKSU Python-Tkinter-Pong-Lesson repository README (last updated 2021) - A very simple game of Pong made within Python Tkinter"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/python-tutorial/refs/heads/master/README.md",
+    "title": "HacKSU python-tutorial repository README (last updated 2019) - An in depth look at python for the uninitiated. We'll be building the classic arcade game, Snake!"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/Python_Game/refs/heads/master/README.md",
+    "title": "HacKSU Python_Game repository README (last updated 2022) - Help with HacktoberFest to create something get together!"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/r-lesson/refs/heads/draft/readme.md",
+    "title": "HacKSU r-lesson repository README (last updated 2020)"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/React-Ideas-List/refs/heads/master/readme.md",
+    "title": "HacKSU React-Ideas-List repository README (last updated 2016) - A starting point for Hacksu's 9/6/16 meeting."
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/react-native-khe25/refs/heads/main/README.md",
+    "title": "HacKSU react-native-khe25 repository README (last updated 2025) - Kent Hack Enough 2025 React Native Workshop"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/react-router-notes/refs/heads/master/readme.md",
+    "title": "HacKSU react-router-notes repository README (last updated 2018)"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/react-tutorial/refs/heads/main/README.md",
+    "title": "HacKSU react-tutorial repository README (last updated 2023) - The basics of React, explained."
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/Reddit_Scraper/refs/heads/master/README.md",
+    "title": "HacKSU Reddit_Scraper repository README (last updated 2020) - A lesson using Python to search through a json object and find posts based on a keyword or a specified subreddit."
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/rust-wasm/refs/heads/master/README.md",
+    "title": "HacKSU rust-wasm repository README (last updated 2018)"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/Rust-Wiki-Random/refs/heads/master/readme.md",
+    "title": "HacKSU Rust-Wiki-Random repository README (last updated 2016) - An example project in rust"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/scary_HacktoberFest/refs/heads/master/README.md",
+    "title": "HacKSU scary_HacktoberFest repository README (archived, last updated 2021) - This is just a fun Halloween themed repo to create something for HacktoberFest!"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/self_learning_guide/refs/heads/master/README.md",
+    "title": "HacKSU self_learning_guide repository README (last updated 2020) - A guide for getting started with self learning and working on personal project"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/server/refs/heads/main/README.md",
+    "title": "HacKSU server repository README (last updated 2025) - A collection of tools to setup and manage HacKSU and KHE Servers"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/socket-penguin-club/refs/heads/master/README.md",
+    "title": "HacKSU socket-penguin-club repository README (last updated 2022)"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/sponsorship-packet/refs/heads/main/README.md",
+    "title": "HacKSU sponsorship-packet repository README (last updated 2026) - HacKSU KHE sponsorship packet"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/starter-portfolio-2026/refs/heads/main/README.md",
+    "title": "HacKSU starter-portfolio-2026 repository README (last updated 2026)"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/static-HTML_CSS/refs/heads/master/README.md",
+    "title": "HacKSU static-HTML_CSS repository README (last updated 2025) - This lesson discusses the basics of HTML, CSS, and JS, using JSFiddle as a work environment."
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/the-modern-web-via-git-and-vercel/refs/heads/main/README.md",
+    "title": "HacKSU the-modern-web-via-git-and-vercel repository README (last updated 2023) - Fourth installment of the modern web development series. Describes how to deploy a website using git and Vercel."
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/the-modern-web-via-vue/refs/heads/main/readme.md",
+    "title": "HacKSU the-modern-web-via-vue repository README (last updated 2023) - Intro to writing components with Vue."
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/the-modern-web-via-vue-via-nuxt/refs/heads/main/Readme.md",
+    "title": "HacKSU the-modern-web-via-vue-via-nuxt repository README (last updated 2023) - Sequel to The Modern Web via Vue that adds server-side code using Nuxt."
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/virtual-machine-shenanigans/refs/heads/main/README.md",
+    "title": "HacKSU virtual-machine-shenanigans repository README (last updated 2025) - Repoisitory for showcasing what a virtual machine is, how to set one up, and how to destroy it with viruses."
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/vps-discussion/refs/heads/main/README.md",
+    "title": "HacKSU vps-discussion repository README (last updated 2021) - Virtual Private Servers - How to get started, What they do, and What to use."
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/vue-firebase/refs/heads/master/README.md",
+    "title": "HacKSU vue-firebase repository README (last updated 2020) - This is the Hacksu lesson for Week 8 10/20"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/vue-rite-of-passage/refs/heads/master/README.md",
+    "title": "HacKSU vue-rite-of-passage repository README (last updated 2018) - A test project to help familiarize people with VueJS"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/vue-tutorial/refs/heads/master/README.md",
+    "title": "HacKSU vue-tutorial repository README (last updated 2021) - A guide to how to start your first Vue project!"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/wasm-image-processing/refs/heads/main/README.md",
+    "title": "HacKSU wasm-image-processing repository README (last updated 2024) - A lesson on how to process images in Rust for HacKSU"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/Webdev_2_Javascript/refs/heads/master/README.md",
+    "title": "HacKSU Webdev_2_Javascript repository README (last updated 2017) - Webdev II: ATTACK OF THE JAVASCRIPT"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/Website/refs/heads/master/README.md",
+    "title": "HacKSU Website repository README (archived, last updated 2019) - Repository that contains code for the website located at"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/website-start-script/refs/heads/master/README.md",
+    "title": "HacKSU website-start-script repository README (archived, last updated 2016) - Clone this and run the bash script if the CS department ever does anything weird to the hacksu server that breaks the webs"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/website_from_your_view/refs/heads/master/README.md",
+    "title": "HacKSU website_from_your_view repository README (last updated 2020) - For HacktoberFest, make a Hacksu website for us! We want to see what you would want our site to look like :)"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/workflows/refs/heads/main/README.md",
+    "title": "HacKSU workflows repository README (archived, last updated 2021)"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/hacksu/constitution/refs/heads/main/hacksu.typ",
+    "title": "HacKSU Constitution (official club constitution, Typst source) - hacksu/constitution"
   }
 ]
