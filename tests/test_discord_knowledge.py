@@ -130,6 +130,24 @@ class KnowledgeIntegrationTests(unittest.IsolatedAsyncioTestCase):
         facts = '"Nesty" means Dr. Mikhail Nesterenko'
         self.assertEqual(discord_bot.expand_nicknames("nestys are birds", facts), "nestys are birds")
 
+    async def test_persona_file_replaces_persona_variable(self):
+        with (
+            patch.object(discord_bot, "retrieve_context", return_value=""),
+            patch.object(discord_bot, "load_persona", return_value="Be objective and professional."),
+        ):
+            await self.bot.generate(None, self.trigger)
+        instructions = self.bot.http_session.body["instructions"]
+        self.assertIn("Be objective and professional.", instructions)
+        self.assertNotIn(discord_bot.PERSONA, instructions)
+
+    async def test_persona_variable_used_without_file(self):
+        with (
+            patch.object(discord_bot, "retrieve_context", return_value=""),
+            patch.object(discord_bot, "PERSONA_FILE", discord_bot.Path("does-not-exist.md")),
+        ):
+            await self.bot.generate(None, self.trigger)
+        self.assertIn(discord_bot.PERSONA, self.bot.http_session.body["instructions"])
+
     def test_missing_facts_file_is_empty(self):
         with patch.object(discord_bot, "FACTS_FILE", discord_bot.Path("does-not-exist.md")):
             self.assertEqual(discord_bot.load_facts(), "")
