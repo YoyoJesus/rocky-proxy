@@ -75,6 +75,65 @@ class KnowledgeIntegrationTests(unittest.IsolatedAsyncioTestCase):
             await self.bot.generate(None, self.trigger)
         search.assert_not_called()
 
+    async def test_instructions_forbid_writing_code(self):
+        with patch.object(discord_bot, "retrieve_context", return_value=""):
+            await self.bot.generate(None, self.trigger)
+        self.assertIn("Do not write", self.bot.http_session.body["instructions"])
+
+    async def test_facts_and_location_reach_instructions(self):
+        trigger = SimpleNamespace(clean_content="hi", guild=SimpleNamespace(name="HacKSU"), channel="general")
+        with (
+            patch.object(discord_bot, "retrieve_context", return_value=""),
+            patch.object(discord_bot, "load_facts", return_value="Nesty means Dr. Nesterenko."),
+        ):
+            await self.bot.generate(None, trigger)
+        instructions = self.bot.http_session.body["instructions"]
+        self.assertIn("Nesty means Dr. Nesterenko.", instructions)
+        self.assertIn('"HacKSU" Discord server', instructions)
+        self.assertIn("#general", instructions)
+
+    async def test_direct_message_location(self):
+        trigger = SimpleNamespace(clean_content="hi", guild=None, channel="dm")
+        with patch.object(discord_bot, "retrieve_context", return_value=""):
+            await self.bot.generate(None, trigger)
+        self.assertIn("a direct message", self.bot.http_session.body["instructions"])
+
+    async def test_creator_is_labeled_by_id_not_name(self):
+        del self.bot.build_input
+        creator = SimpleNamespace(display_name="Someone", bot=False, id=discord_bot.CREATOR_ID)
+        impostor = SimpleNamespace(display_name="yoyojesus", bot=False, id=1)
+        msgs = [SimpleNamespace(clean_content=t, attachments=[], author=a) for t, a in (("hi", creator), ("me too", impostor))]
+
+        async def history(**kwargs):
+            for m in reversed(msgs):  # Discord returns newest first
+                yield m
+
+        result = await self.bot.build_input(SimpleNamespace(history=history))
+        self.assertEqual(
+            [m["content"] for m in result],
+            ["Someone (user, Rocky's creator): hi", "yoyojesus (user): me too"],
+        )
+
+    async def test_nicknames_expand_search_query(self):
+        trigger = SimpleNamespace(clean_content="is nesty teaching this semester?")
+        facts = '- "Nesty" means Dr. Mikhail Nesterenko, Professor and Chair.'
+        with (
+            patch.object(discord_bot, "retrieve_context", return_value="") as search,
+            patch.object(discord_bot, "load_facts", return_value=facts),
+        ):
+            await self.bot.generate(None, trigger)
+        query = search.call_args.args[0]
+        self.assertTrue(query.startswith("Dr. Mikhail Nesterenko"), query)
+        self.assertNotIn("Professor and Chair", query)
+
+    def test_nickname_needs_whole_word(self):
+        facts = '"Nesty" means Dr. Mikhail Nesterenko'
+        self.assertEqual(discord_bot.expand_nicknames("nestys are birds", facts), "nestys are birds")
+
+    def test_missing_facts_file_is_empty(self):
+        with patch.object(discord_bot, "FACTS_FILE", discord_bot.Path("does-not-exist.md")):
+            self.assertEqual(discord_bot.load_facts(), "")
+
     async def test_history_is_anchored_to_trigger(self):
         del self.bot.build_input
         author = SimpleNamespace(display_name="Alice", bot=False)
@@ -96,6 +155,28 @@ class KnowledgeIntegrationTests(unittest.IsolatedAsyncioTestCase):
                 "Alice (user): Actual question",
             ],
         )
+
+
+class StripCodeTests(unittest.TestCase):
+    def test_removes_multiline_code_block(self):
+        text = "Use a loop:\n```python\nfor i in range(3):\n    print(i)\n    total += i\n```\nThat's it."
+        result = discord_bot.strip_code(text)
+        self.assertNotIn("print(i)", result)
+        self.assertIn(discord_bot.CODE_REMOVED, result)
+        self.assertIn("Use a loop:", result)
+        self.assertIn("That's it.", result)
+
+    def test_removes_unterminated_block(self):
+        result = discord_bot.strip_code("Here:\n```js\nconst a = 1;\nconst b = 2;\nconst c = 3;\nconst d = 4;")
+        self.assertNotIn("const", result)
+
+    def test_keeps_short_commands_and_inline_code(self):
+        text = "Run this:\n```\nsudo apt update\n```\nThen open `kali-setup`."
+        self.assertEqual(discord_bot.strip_code(text), text)
+
+    def test_reply_that_is_only_code(self):
+        result = discord_bot.strip_code("```c\nint main() {\n  int x = 0;\n  return x;\n}\n```")
+        self.assertEqual(result, discord_bot.CODE_REMOVED)
 
 
 if __name__ == "__main__":
