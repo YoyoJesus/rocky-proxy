@@ -116,6 +116,14 @@ class ExtractionTests(unittest.TestCase):
         )
         self.assertEqual(text, "- One\n- Two\n\nA | B\nC | D")
 
+    def test_adjacent_spans_are_separated(self):
+        _, text = kb.extract_html(
+            "<body><h3>Alice</h3><div><span>President</span><span>CTF Designer</span></div>"
+            "<p>Plain <span>inline</span> text.</p></body>"
+        )
+        self.assertIn("President, CTF Designer", text)
+        self.assertIn("Plain inline text.", text)
+
     def test_falls_back_to_whole_body_without_main(self):
         _, text = kb.extract_html("<body><nav>menu</nav><h2>Hours</h2><p>Open daily.</p><script>x()</script></body>")
         self.assertIn("## Hours", text)
@@ -241,6 +249,30 @@ class ChunkingTests(unittest.TestCase):
             self.assertLessEqual(len(body), 300)
         joined = [line for _, body in chunks for line in body.split("\n")[1:]]
         self.assertEqual(joined, rows.split("\n"))
+
+    def test_tiny_leaf_sections_fold_into_parent(self):
+        text = (
+            "# Leaders\n\n## Current Leadership\n\n### Alice Smith\n\nPresident, CTF Designer\n\n"
+            "### Bob Jones\n\nTreasurer\n\n### Dana Lee\n\nDirector of Lessons\n\n"
+            "## Spring 2024\n\n### Carol White\n\nVice President"
+        )
+        self.assertEqual(
+            kb.chunk_text(text),
+            [
+                (
+                    "Leaders > Current Leadership",
+                    "- Alice Smith: President, CTF Designer\n- Bob Jones: Treasurer\n- Dana Lee: Director of Lessons",
+                ),
+                ("Leaders > Spring 2024", "- Carol White: Vice President"),
+            ],
+        )
+
+    def test_course_and_long_sections_are_not_folded(self):
+        long_body = "Detailed description. " * 10
+        text = f"# Catalog\n\n### CS 23001 DATA STRUCTURES\n\nShort.\n\n### Overview\n\n{long_body}"
+        headings = [h for h, _ in kb.chunk_text(text)]
+        self.assertIn("Catalog > CS 23001 DATA STRUCTURES", headings)
+        self.assertIn("Catalog > Overview", headings)
 
     def test_empty_sections_skipped(self):
         self.assertEqual(kb.chunk_text("# Only heading\n\n## Another\n"), [])
@@ -473,6 +505,20 @@ class RetrievalTests(TempDirCase):
         self.assertEqual(results[0].heading, "Parking > Permits")
         self.assertEqual(results[0].doc_id, "file:parking.md")
 
+    def test_chunks_matching_every_term_rank_first(self):
+        self.write_md("staff.md", "# Director of Lessons\n\n## Lessons Director\n\nDirector of lessons and director of labs.")
+        self.write_md("club.md", "# Officers\n\nTati is the club director of lessons, among other officer roles here.")
+        self.refresh()
+        results = kb.search_chunks("who is the club director of lessons", self.db)
+        self.assertEqual(results[0].doc_id, "file:club.md")
+        self.assertIn("file:staff.md", [r.doc_id for r in results])
+
+    def test_honorifics_are_ignored(self):
+        self.write_md("profile.md", "# Mikhail Nesterenko\n\nProfessor and Chair of Computer Science.")
+        self.write_md("club.md", "# Club resources\n\nAsk Dr. Nesterenko, Dr. Smith, or Dr. Lee about the department.")
+        self.refresh()
+        self.assertEqual(kb.search_chunks("tell me about Dr. Nesterenko", self.db)[0].doc_id, "file:profile.md")
+
     def test_title_and_heading_matches_rank_high(self):
         results = kb.search_chunks("operating systems", self.db)
         self.assertEqual(results[0].doc_id, "file:os.md")
@@ -537,7 +583,7 @@ class RetrievalTests(TempDirCase):
         self.assertEqual(kb.search_chunks("unicorn", self.db, limit=0), [])
 
     def test_per_document_cap(self):
-        text = "# Big\n\n" + "\n\n".join(f"## S{i}\n\nunicorn section {i}" for i in range(10))
+        text = "# Big\n\n" + "\n\n".join(f"## S{i}\n\nunicorn section {i} " + "detail " * 50 for i in range(10))
         self.write_md("big.md", text)
         self.refresh()
         results = kb.search_chunks("unicorn", self.db, limit=10)

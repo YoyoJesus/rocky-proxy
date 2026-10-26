@@ -39,8 +39,9 @@ ALLOWED_HOSTS_ENV = "KNOWLEDGE_ALLOWED_HOSTS"
 DEFAULT_PRIVATE_HOSTS = ("web.cs.kent.edu",)
 PRIVATE_HOSTS_ENV = "KNOWLEDGE_PRIVATE_HOSTS"
 
-CHUNK_VERSION = 3
+CHUNK_VERSION = 5
 CHUNK_MAX_CHARS = 1200
+FOLD_MAX_CHARS = 300
 MAX_CHUNKS_PER_DOC = 500
 MAX_SOURCES = 400
 MAX_FILE_BYTES = 1_000_000
@@ -129,6 +130,7 @@ class _TextExtractor(HTMLParser):
         self._title: list[str] = []
         self._all: list[str] = []
         self._main_parts: list[str] = []
+        self._span_just_closed = False  # separates <span>A</span><span>B</span> rendered as stacked labels
 
     def _emit(self, text: str) -> None:
         if self._skip:
@@ -143,6 +145,9 @@ class _TextExtractor(HTMLParser):
             self._in_title = True
         if tag == "body":
             self._close("head")
+        if tag == "span" and self._span_just_closed:
+            self._emit(", ")
+        self._span_just_closed = False
         if tag in VOID_TAGS:
             if tag == "br":
                 self._emit(" " if self._heading else "\n")
@@ -197,6 +202,7 @@ class _TextExtractor(HTMLParser):
         elif tag in BLOCK_BREAK and tag not in {"tr", "thead", "tbody"}:
             self._emit("\n")
         self._close(tag)
+        self._span_just_closed = tag == "span"
 
     def _close(self, tag: str) -> None:
         for i in range(len(self._stack) - 1, -1, -1):
@@ -213,6 +219,7 @@ class _TextExtractor(HTMLParser):
             return
         if self._skip:
             return
+        self._span_just_closed = False
         text = re.sub(r"\s+", " ", data) if data.strip() else " "
         if self._link is not None:
             self._link[1].append(text)
@@ -325,17 +332,54 @@ def _section_chunks(lines: list[str], limit: int) -> list[str]:
     return [c for c in _pack(units, "\n\n", limit) if re.search(r"\w", c)]
 
 
+@dataclass
+class _Section:
+    level: int
+    heading: str
+    title: str
+    lines: list[str]
+    folded: bool = False
+
+
+def _fold_tiny_sections(sections: list[_Section]) -> None:
+    """Fold short leaf sections into their parents as '- Title: body' lines, deepest first.
+
+    Rosters ('### Alice' / 'President', ...) otherwise become many label-only chunks, and search returns at most
+    MAX_CHUNKS_PER_DOC_IN_RESULTS per page. A depth is folded only when the document has 3+ short leaves there, so
+    lone short sections stay separate; headings with course codes are never folded. Repeating the pass lets
+    sections whose children were folded (e.g. semesters of a roster) fold into their own parent.
+    """
+    changed = True
+    while changed:
+        changed = False
+        candidates: dict[int, list[tuple[int, int, str]]] = {}
+        for i, section in enumerate(sections):
+            if section.folded or not section.level or COURSE_CODE_RE.search(section.title):
+                continue
+            following = next((s for s in sections[i + 1 :] if not s.folded), None)
+            if following is not None and following.level > section.level:
+                continue
+            body = "; ".join(line.strip().removeprefix("- ") for line in section.lines if line.strip())
+            parent = next((j for j in range(i - 1, -1, -1) if not sections[j].folded and sections[j].level < section.level), None)
+            if body and len(body) <= FOLD_MAX_CHARS and parent is not None:
+                candidates.setdefault(section.level, []).append((i, parent, body))
+        for items in candidates.values():
+            if len(items) < 3:
+                continue
+            for i, parent, body in items:
+                lines = sections[parent].lines
+                if lines and lines[-1].strip() and not lines[-1].startswith("- "):
+                    lines.append("")
+                lines.append(f"- {sections[i].title}: {body}")
+                sections[i].folded = True
+                changed = True
+
+
 def chunk_text(text: str, max_chars: int = CHUNK_MAX_CHARS) -> list[tuple[str, str]]:
     """Split markdown-ish text into (heading path, body) chunks of at most max_chars characters."""
-    chunks: list[tuple[str, str]] = []
     path: list[tuple[int, str]] = []
-    heading = ""
-    lines: list[str] = []
+    sections = [_Section(0, "", "", [])]
     fence = ""
-
-    def flush() -> None:
-        chunks.extend((heading, body) for body in _section_chunks(lines, max_chars))
-
     for line in text.splitlines():
         stripped = line.lstrip()
         if stripped.startswith(("```", "~~~")):
@@ -345,16 +389,15 @@ def chunk_text(text: str, max_chars: int = CHUNK_MAX_CHARS) -> list[tuple[str, s
         if match and not match.group(2):
             continue
         if match:
-            flush()
             level = len(match.group(1))
             while path and path[-1][0] >= level:
                 path.pop()
             path.append((level, match.group(2).strip()))
-            heading = " > ".join(name for _, name in path)
-            lines = []
+            sections.append(_Section(level, " > ".join(name for _, name in path), match.group(2).strip(), []))
         else:
-            lines.append(line)
-    flush()
+            sections[-1].lines.append(line)
+    _fold_tiny_sections(sections)
+    chunks = [(s.heading, body) for s in sections if not s.folded for body in _section_chunks(s.lines, max_chars)]
     return chunks[:MAX_CHUNKS_PER_DOC]
 
 
@@ -368,7 +411,7 @@ STOPWORDS = frozenset(
     him his how i if in into is it its just me more most my no nor not of off on once only or other our out over own
     same she should so some such than that the their them then there these they this those through to too under until
     up us very was we were what when where which while who whom why will with would you your yours please tell hey hi
-    hello thanks thank rocky""".split()
+    hello thanks thank rocky dr prof professor""".split()
 )
 COURSE_CODE_RE = re.compile(r"\b([A-Za-z]{2,5})[\s\-]?(\d{5})\b")  # Kent-style 5-digit course numbers only
 _QUERY_NOISE_RE = re.compile(r"https?://\S+|<[@#][!&]?\d+>|<a?:\w+:\d+>")
@@ -927,7 +970,8 @@ def search_chunks(query: str, db_path: str | Path, *, limit: int = 5) -> list[Se
         codes = " OR ".join(code_terms)
         matches = [f"({full}) AND {{title heading}} : ({codes})", f"({full}) AND {{codes}} : ({codes})"]
     else:
-        matches = [full]
+        # Chunks containing every term come first, so one heavily repeated word cannot outrank a full match.
+        matches = [" AND ".join(terms), full] if len(terms) > 1 else [full]
     sql = (
         "SELECT c.doc_id, c.heading, c.body, d.title, d.url, d.path, d.fetched_at,"
         " bm25(chunk_fts, ?, ?, ?, ?) AS score"
