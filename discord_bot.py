@@ -32,6 +32,7 @@ DISCORD_LIMIT = 2000
 KNOWLEDGE_DB = Path(os.environ.get("BOT_KNOWLEDGE_DB", str(Path(__file__).parent / "data/knowledge.sqlite3")))
 KNOWLEDGE_LIMIT = int(os.environ.get("BOT_KNOWLEDGE_LIMIT", "5"))
 KNOWLEDGE_MAX_CHARS = int(os.environ.get("BOT_KNOWLEDGE_MAX_CHARS", "12000"))
+IGNORED_IDS = {int(i) for i in os.environ.get("BOT_IGNORE_IDS", "1559792130434670642").split(",") if i.strip()}
 CREATOR_ID = int(os.environ.get("BOT_CREATOR_ID", "351807022980661249") or 0)
 FACTS_FILE = Path(os.environ.get("BOT_FACTS_FILE", str(Path(__file__).parent / "bot_facts.md")))
 FACTS_MAX_CHARS = 6000
@@ -156,7 +157,7 @@ class RockyBot(discord.Client):
         return [p for p in ("view_channel", send, "read_message_history") if not getattr(perms, p)]
 
     async def on_message(self, message: discord.Message) -> None:
-        if message.author == self.user:
+        if message.author == self.user or message.author.id in IGNORED_IDS:
             return
         channel_id = message.channel.id
         if not message.author.bot:

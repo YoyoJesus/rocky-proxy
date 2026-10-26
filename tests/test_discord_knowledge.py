@@ -148,6 +148,16 @@ class KnowledgeIntegrationTests(unittest.IsolatedAsyncioTestCase):
             await self.bot.generate(None, self.trigger)
         self.assertIn(discord_bot.PERSONA, self.bot.http_session.body["instructions"])
 
+    async def test_ignored_users_never_trigger_a_reply(self):
+        self.bot.generate = AsyncMock()
+        ducksu = SimpleNamespace(id=next(iter(discord_bot.IGNORED_IDS)), bot=True)
+        message = SimpleNamespace(author=ducksu, content="hey rocky", clean_content="hey rocky", mentions=[])
+        await self.bot.on_message(message)
+        self.bot.generate.assert_not_called()
+
+    def test_ducksu_ignored_by_default(self):
+        self.assertIn(1559792130434670642, discord_bot.IGNORED_IDS)
+
     def test_missing_facts_file_is_empty(self):
         with patch.object(discord_bot, "FACTS_FILE", discord_bot.Path("does-not-exist.md")):
             self.assertEqual(discord_bot.load_facts(), "")

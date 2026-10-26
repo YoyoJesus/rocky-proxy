@@ -70,9 +70,10 @@ The examples target `qwen3.8-27b`. If Rocky's model changes, check `GET /v1/mode
 | `BOT_COOLDOWN`      | `5` seconds per channel                   |
 | `BOT_CODE_MAX_LINES` | `2` lines allowed in a code block        |
 | `BOT_CREATOR_ID`    | Discord user ID labeled as the creator    |
+| `BOT_IGNORE_IDS`    | Discord user IDs that never trigger a reply (default: ducksu) |
 | `BOT_FACTS_FILE`    | `bot_facts.md` beside the bot script      |
 
-Loop guards: the bot never replies to itself, stops replying to other bots after `BOT_MAX_BOT_TURNS` in a row until a human posts, ignores bot messages during the cooldown, and backs off for Rocky's rate-limit reset time on errors. Mentions in model output are disabled so it cannot ping `@everyone` or roles.
+Loop guards: the bot never replies to itself or to users in `BOT_IGNORE_IDS` (the ducksu bot by default), stops replying to other bots after `BOT_MAX_BOT_TURNS` in a row until a human posts, ignores bot messages during the cooldown, and backs off for Rocky's rate-limit reset time on errors. Mentions in model output are disabled so it cannot ping `@everyone` or roles.
 
 The bot does not write code. It is instructed to explain programming concepts and point to course resources instead, and any fenced code block longer than `BOT_CODE_MAX_LINES` non-blank lines is replaced with a notice before sending. Short setup commands quoted from the knowledge references still get through.
 
