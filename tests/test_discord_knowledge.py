@@ -1,6 +1,7 @@
 """Offline checks of the references actually sent to Rocky."""
 
 import sqlite3
+import tempfile
 import unittest
 from types import SimpleNamespace
 from unittest.mock import AsyncMock, patch
@@ -157,6 +158,12 @@ class KnowledgeIntegrationTests(unittest.IsolatedAsyncioTestCase):
 
     def test_ducksu_ignored_by_default(self):
         self.assertIn(1559792130434670642, discord_bot.IGNORED_IDS)
+
+    def test_operator_file_comments_are_stripped(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = discord_bot.Path(tmp) / "facts.md"
+            path.write_text("<!-- editor note\nspanning lines -->\n# Facts\n- Keep me <!-- inline -->\n", encoding="utf-8")
+            self.assertEqual(discord_bot.read_operator_file(path, 1000), "# Facts\n- Keep me")
 
     def test_missing_facts_file_is_empty(self):
         with patch.object(discord_bot, "FACTS_FILE", discord_bot.Path("does-not-exist.md")):
