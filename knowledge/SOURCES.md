@@ -59,6 +59,14 @@ HacKSU club pages, Kent Hack Enough (`khe.io`), and Kent Hack It (`ctf.hacksu.co
   public README or documentation URLs to expand coverage. READMEs track the default branch
   selected during research (`main`) and may contain old lesson advice or promotions.
 - The university organization portal is omitted in favor of focused first-party pages.
+- Research labs and student posters: the poster pages name advisors, not labs. When `sources.json` lists both
+  the Research Labs page and Creative Poster Projects, refresh also rebuilds a derived "research lab student
+  posters" document (`research_posters.py`) once a day: it follows the yearly poster pages linked from the
+  index (and their sub-pages, like 2025's) and files each poster under its advisor's lab. This is the one
+  exception to "linked pages are not crawled", limited to `kent.edu/cs/global-circ/<year>-...poster...` URLs.
+  The 2025+ pages identify advisors only by file name; `FILE_PREFIXES` spells out the three Kims. The poster
+  pages embed their images (2023 is about 24 MB), so this fetch allows up to 40 MB per page. The COF Program
+  Team page is skipped because it still lists Javed Khan as chair.
 
 This file documents source choices and is excluded from the searchable index. Use `status` to
 inspect actual download dates and errors; no availability claim here replaces refresh output.

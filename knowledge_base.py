@@ -30,6 +30,8 @@ from urllib.parse import urljoin, urlsplit, urlunsplit
 
 import requests
 
+import research_posters
+
 DEFAULT_DB = "data/knowledge.sqlite3"
 DEFAULT_SOURCES = "knowledge/sources.json"
 DEFAULT_KNOWLEDGE_DIR = "knowledge"
@@ -52,6 +54,11 @@ MAX_FILE_BYTES = 1_000_000
 MAX_FETCH_BYTES = 2_000_000
 FETCH_TIMEOUT = (5, 15)
 FETCH_DEADLINE = 30.0
+# The poster pages embed their images, and the 2023 one is about 24 MB.
+POSTER_FETCH_BYTES = 40_000_000
+POSTER_FETCH_DEADLINE = 120.0
+POSTER_REFRESH_HOURS = 24.0
+POSTER_DOC_ID = "derived:research-lab-posters"
 MAX_REDIRECTS = 3
 USER_AGENT = "rocky-knowledge-bot/1.0 (+local retrieval; no crawling)"
 ACCEPTED_TYPES = {"text/html", "application/xhtml+xml", "text/plain", "text/markdown", "text/javascript"}
@@ -732,13 +739,14 @@ def fetch_url(
     session: requests.Session | None = None,
     resolver: Resolver = socket.getaddrinfo,
     max_bytes: int = MAX_FETCH_BYTES,
+    deadline: float = FETCH_DEADLINE,
 ) -> FetchedPage:
     """Fetch one explicit URL: no auth or cookies, bounded size and time, validated redirects, text types only."""
     own_session = session is None
     session = session or requests.Session()
     if own_session:
         session.trust_env = False
-    deadline = time.monotonic() + FETCH_DEADLINE
+    deadline = time.monotonic() + deadline
     try:
         current = validate_url(url, allowed_hosts, resolver)
         for _ in range(MAX_REDIRECTS + 1):
@@ -913,6 +921,59 @@ def _import_web(
     report.web_removed = len(stale)
 
 
+def _import_posters(
+    conn: sqlite3.Connection,
+    sources: list[Source],
+    allowed_hosts: Sequence[str],
+    fetcher: Fetcher,
+    report: RefreshReport,
+    force: bool = False,
+) -> None:
+    """Rebuild the lab-to-poster digest from the Research Labs page and every poster page the index links to.
+
+    Runs only when the manifest lists both pages. Any failed page keeps the previous digest.
+    """
+    urls = {s.url for s in sources}
+    if not {research_posters.LABS_URL, research_posters.INDEX_URL} <= urls:
+        return
+    row = conn.execute("SELECT last_attempt FROM documents WHERE id = ?", (POSTER_DOC_ID,)).fetchone()
+    age = (datetime.now(UTC) - datetime.fromisoformat(row["last_attempt"])).total_seconds() if row else None
+    if not force and age is not None and age < POSTER_REFRESH_HOURS * 3600 - 300:
+        report.web_skipped += 1
+        return
+
+    def get(url: str) -> tuple[str, str]:
+        page = fetcher(url, allowed_hosts)
+        return page.text, extract_html(page.text, page.url)[1]
+
+    try:
+        labs = get(research_posters.LABS_URL)[1]
+        queue = research_posters.poster_links(get(research_posters.INDEX_URL)[0])
+        seen, pages = {url for url, _ in queue}, []
+        while queue and len(pages) < research_posters.MAX_PAGES:
+            url, year = queue.pop(0)
+            html, text = get(url)
+            pages.append((year, url, text))
+            # A year page can split its posters onto sub-pages (2025 does).
+            for link, link_year in research_posters.poster_links(html):
+                if link_year == year and link not in seen:
+                    seen.add(link)
+                    queue.append((link, link_year))
+        digest = research_posters.build_digest(labs, pages)
+        _, source, body = parse_markdown(digest, research_posters.TITLE)
+        result = store_document(
+            conn, POSTER_DOC_ID, kind="derived", title=research_posters.TITLE, text=body, url=source, touch_date=True
+        )
+    except (OSError, KnowledgeError) as exc:
+        report.failures.append((POSTER_DOC_ID, str(exc)))
+        _record_failure(conn, POSTER_DOC_ID, str(exc))
+        return
+    if result == "updated":
+        report.web_updated += 1
+    else:
+        report.web_unchanged += 1
+
+
 def refresh(
     db_path: str | Path = DEFAULT_DB,
     *,
@@ -944,6 +1005,11 @@ def refresh(
             report.notes.append(f"knowledge dir not found, skipped files: {knowledge_dir}")
         if sources is not None:
             _import_web(conn, sources, hosts, fetcher, report, force)
+            poster_fetcher = fetcher
+            if fetcher is fetch_url:
+                def poster_fetcher(url: str, hosts: Sequence[str]) -> FetchedPage:
+                    return fetch_url(url, hosts, max_bytes=POSTER_FETCH_BYTES, deadline=POSTER_FETCH_DEADLINE)
+            _import_posters(conn, sources, hosts, poster_fetcher, report, force)
         else:
             report.notes.append(f"manifest not found, skipped web sources: {sources_path}")
     return report
