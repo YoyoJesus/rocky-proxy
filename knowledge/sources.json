@@ -23,6 +23,51 @@
     "refresh_hours": 1
   },
   {
+    "url": "https://www.kent.edu/cs/research-labs",
+    "title": "Research Labs and Lab Directors - Kent State CS",
+    "refresh_hours": 24
+  },
+  {
+    "url": "https://www.kent.edu/cs/global-circ/21st-century-computer-science-workplace-ohio",
+    "title": "CS for 21st Century Ohio (Choose Ohio First CS scholarship program) - Kent State CS",
+    "refresh_hours": 24
+  },
+  {
+    "url": "https://www.kent.edu/cs/global-circ/cof-cs-scholarship-application",
+    "title": "Choose Ohio First CS Scholarship Application - Kent State CS",
+    "refresh_hours": 24
+  },
+  {
+    "url": "https://www.kent.edu/cs/global-circ/creative-poster-projects",
+    "title": "Choose Ohio First Creative Poster Projects (index of yearly poster conferences) - Kent State CS",
+    "refresh_hours": 24
+  },
+  {
+    "url": "https://www.kent.edu/cs/global-circ/2026-cof-research-poster-conference",
+    "title": "2026 Choose Ohio First Research Poster Conference - Kent State CS",
+    "refresh_hours": 24
+  },
+  {
+    "url": "https://www.kent.edu/cs/global-circ/2025-cof-poster-conference",
+    "title": "2025 Choose Ohio First Poster Conference - Kent State CS",
+    "refresh_hours": 24
+  },
+  {
+    "url": "https://www.kent.edu/cs/global-circ/2024-cof-research-poster-conference",
+    "title": "2024 Choose Ohio First Research Poster Conference - Kent State CS",
+    "refresh_hours": 24
+  },
+  {
+    "url": "https://www.kent.edu/cs/global-circ/2022-cof-research-poster-project",
+    "title": "2022 Choose Ohio First Research Poster Projects - Kent State CS",
+    "refresh_hours": 24
+  },
+  {
+    "url": "https://www.kent.edu/cs/global-circ/2021-cof-research-poster-project",
+    "title": "2021 Choose Ohio First Research Poster Projects - Kent State CS",
+    "refresh_hours": 24
+  },
+  {
     "url": "https://www.kent.edu/cs/faculty-staff",
     "title": "Faculty and Staff Directory - Kent State CS"
   },
