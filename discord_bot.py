@@ -255,6 +255,9 @@ class RockyBot(discord.Client):
         # Matching the references too pulls in the clean live copy when search found the raw page.
         if LIVE_INFO and (live := await self.live.get(f"{query}\n{context}", now)):
             context = live + ("\n\n" + context if context else "")
+        # Enough to explain a reply from the journal: what was searched and which sources the model saw.
+        sources = re.findall(r"^Source: (\S+)|\(checked hourly from (\S+)\):$", context, re.MULTILINE)
+        log.info("Search %r -> %s", query[:150], ", ".join(a or b for a, b in sources) or "no references")
         guild = getattr(trigger, "guild", None)
         where = f'the "{guild.name}" Discord server, in #{trigger.channel}' if guild else "a direct message"
         persona = load_persona()

@@ -1087,7 +1087,8 @@ def retrieve_context(query: str, db_path: str | Path, *, limit: int = 5, max_cha
                     "SELECT heading, body FROM chunks WHERE doc_id = ? ORDER BY ord", (result.doc_id,)
                 ).fetchall()
                 text = "\n\n".join((f"## {r['heading']}\n" if r["heading"] else "") + r["body"] for r in rows)
-                result = replace(result, text=text)
+                # The whole page is sent, so label it by its title rather than whichever section matched.
+                result = replace(result, heading="", text=text)
                 whole_docs.add(result.doc_id)
             expanded.append(result)
     return format_context(expanded, max_chars)

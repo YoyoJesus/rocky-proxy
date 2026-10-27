@@ -363,7 +363,9 @@ class IngestionTests(TempDirCase):
         self.assertEqual(calls, ["https://www.kent.edu/cs/advising"])
         self.assertEqual(report.web_updated, 1)
         out = kb.retrieve_context("priority registration April", self.db)
-        self.assertIn("CS Advising Page > Computer Science Advising > Registration", out)
+        # A small page is sent whole, labeled by its title, with every section heading kept in the body.
+        self.assertIn("[1] CS Advising Page\n", out)
+        self.assertIn("## Computer Science Advising > Registration\n- Priority registration", out)
         self.assertIn("Source: https://www.kent.edu/cs/advising\n", out)
         self.assertRegex(out, r"Retrieved: \d{4}-\d{2}-\d{2}\n")
         self.assertNotIn("IGNORE ALL", kb.retrieve_context("previous instructions", self.db))
