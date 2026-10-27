@@ -1138,5 +1138,25 @@
     "url": "http://antares.cs.kent.edu/~mikhail/",
     "title": "Mikhail Nesterenko personal homepage (older page; its office and contact details may be outdated)",
     "refresh_hours": 24
+  },
+  {
+    "url": "https://csi.cs.kent.edu/Labs/",
+    "title": "CS 13011 / CS 13012 CS I (CS IA and CS IB) programming labs: lab assignment list, lab policy, setup guides",
+    "refresh_hours": 1
+  },
+  {
+    "url": "https://csi.cs.kent.edu/schedule.txt",
+    "title": "CS 13011 / CS 13012 CS I tentative lecture, lab, and exam schedule (file lists Summer 2026)",
+    "refresh_hours": 1
+  },
+  {
+    "url": "http://antares.cs.kent.edu/~mikhail/classes/cs3/Labs/",
+    "title": "CS 44001 / CS 54001 CS III programming labs: lab assignment list, lab policy, servers and submission",
+    "refresh_hours": 1
+  },
+  {
+    "url": "http://antares.cs.kent.edu/~mikhail/classes/cs3/schedule.txt",
+    "title": "CS 44001 / CS 54001 CS III tentative quiz, midterm, and final exam schedule",
+    "refresh_hours": 1
   }
 ]
