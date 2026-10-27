@@ -1093,5 +1093,42 @@
     "url": "https://internships.cs.kent.edu/",
     "title": "Kent State CS Internships and Co-ops Guide: timeline, where to look, getting ready, FAQ",
     "refresh_hours": 24
+  },
+  {
+    "url": "https://csi.cs.kent.edu/",
+    "title": "CS 13011 / CS 13012 Computer Science IA and IB (CS I) course page: instructor, office hours, lectures, labs (page lists Fall 2025)"
+  },
+  {
+    "url": "https://data-structures.cs.kent.edu/",
+    "title": "CS 23001 Computer Science II: Data Structures and Abstraction (CS II) course page: instructor, lecture time and room, links"
+  },
+  {
+    "url": "https://data-structures.cs.kent.edu/calendar.html",
+    "title": "CS 23001 CS II course calendar: exam dates, final exam, no-lecture days"
+  },
+  {
+    "url": "https://data-structures.cs.kent.edu/schedule.html",
+    "title": "CS 23001 CS II lecture topics and textbook chapters"
+  },
+  {
+    "url": "https://data-structures.cs.kent.edu/labs/index.html",
+    "title": "CS 23001 CS II labs: weekly labs, lab exams, due dates"
+  },
+  {
+    "url": "https://data-structures.cs.kent.edu/resources.html",
+    "title": "CS 23001 CS II resources for C++ programmers: books and references"
+  },
+  {
+    "url": "https://www.cs.kent.edu/~jmaletic/office-hours.html",
+    "title": "Dr. Jonathan I. Maletic schedule and office hours (CS II)"
+  },
+  {
+    "url": "http://antares.cs.kent.edu/~mikhail/classes/cs3/",
+    "title": "CS 44001 / CS 54001 Computer Science III: Programming Patterns (CS III) course page, Dr. Mikhail Nesterenko: office hours, lectures, labs"
+  },
+  {
+    "url": "http://antares.cs.kent.edu/~mikhail/",
+    "title": "Mikhail Nesterenko personal homepage (older page; its office and contact details may be outdated)",
+    "refresh_hours": 24
   }
 ]

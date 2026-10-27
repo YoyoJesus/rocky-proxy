@@ -11,8 +11,7 @@ HacKSU club pages, Kent Hack Enough (`khe.io`), and Kent Hack It (`ctf.hacksu.co
   personal faculty websites on `cs.kent.edu` and `personal.kent.edu` hosts that load over HTTPS. Added October 26, 2026.
   Most profile pages only list title, office, contact and education; fuller bios and research descriptions
   come from personal sites, which some faculty no longer update. Skipped sites: those returning 403
-  (Melton, Guo), off-campus hosts (Kwangtaek Kim's Google Site, raifulhasan.com), an HTTP-only redirect
-  (Nesterenko) and a page without readable text (Sharma).
+  (Melton, Guo), off-campus hosts (Kwangtaek Kim's Google Site, raifulhasan.com) and a page without readable text (Sharma).
   New faculty are not added automatically; recheck the directory each semester.
 - Current class schedule (sections, CRNs, days/times, instructors, rooms, enrollment): `web.cs.kent.edu/schedule/`.
   It lists one semester (Fall 2026 when added on October 26, 2026) and enrollment numbers change daily.
@@ -20,6 +19,10 @@ HacKSU club pages, Kent Hack Enough (`khe.io`), and Kent Hack It (`ctf.hacksu.co
   `DEFAULT_PRIVATE_HOSTS`; refreshing from off campus fails for it and keeps the last good copy.
 - CS tutoring schedule: `antares.cs.kent.edu/~tutoring/schedule.txt` (plain text, linked from the tutoring page).
   Its HTTPS certificate names another host, so it is fetched over HTTP via `DEFAULT_HTTP_HOSTS`.
+- Course pages (added October 27, 2026): CS I (`csi.cs.kent.edu`, still lists Fall 2025 when added), CS II
+  (`data-structures.cs.kent.edu` plus its calendar, topics, labs and resources pages, and Dr. Maletic's office
+  hours), and CS III (`antares.cs.kent.edu/~mikhail/classes/cs3/`). Dr. Nesterenko's antares homepage is old
+  (its office differs from the CS III page) and is titled as possibly outdated. Project specs are not indexed.
 - Industry connections (added October 27, 2026): `industry.cs.kent.edu`, the career fair and internship guide
   subdomains, and the seminar speaker registry `industry.cs.kent.edu/seminar/js/data.js`, which the seminar page
   renders with JavaScript. The seminar page has no time or room; the alumni page is only a Google Form and is skipped.
