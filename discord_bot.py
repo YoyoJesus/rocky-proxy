@@ -197,9 +197,9 @@ class RockyBot(discord.Client):
             self.ready_at[channel_id] = time.monotonic() + COOLDOWN
 
             parts = split_message(reply) or ["..."]
-            await message.reply(parts[0], mention_author=False)
+            await message.reply(parts[0], mention_author=False, suppress_embeds=True)
             for part in parts[1:]:
-                await message.channel.send(part)
+                await message.channel.send(part, suppress_embeds=True)
 
     async def build_input(self, channel: discord.abc.Messageable, trigger: discord.Message | None = None) -> list[dict]:
         messages = []

@@ -23,6 +23,14 @@ class Response:
         return {"output_text": "Here is the answer."}
 
 
+class Typing:
+    async def __aenter__(self):
+        return self
+
+    async def __aexit__(self, *args):
+        pass
+
+
 class Session:
     def post(self, url, *, json):
         self.body = json
@@ -163,6 +171,19 @@ class KnowledgeIntegrationTests(unittest.IsolatedAsyncioTestCase):
         message = SimpleNamespace(author=ducksu, content="hey rocky", clean_content="hey rocky", mentions=[])
         await self.bot.on_message(message)
         self.bot.generate.assert_not_called()
+
+    async def test_replies_suppress_link_embeds(self):
+        self.bot.generate = AsyncMock(return_value="a" * 2500)
+        channel = SimpleNamespace(id=5, send=AsyncMock(), typing=lambda: Typing())
+        author = SimpleNamespace(id=2, bot=False)
+        message = SimpleNamespace(
+            author=author, channel=channel, content="rocky?", clean_content="rocky?", attachments=[],
+            mentions=[], reference=None, guild=None, reply=AsyncMock(),
+        )  # fmt: skip
+        with patch.object(discord_bot, "COOLDOWN", 0), patch.object(discord_bot.discord, "DMChannel", SimpleNamespace):
+            await self.bot.on_message(message)
+        self.assertTrue(message.reply.call_args.kwargs["suppress_embeds"])
+        self.assertTrue(channel.send.call_args.kwargs["suppress_embeds"])
 
     def test_ducksu_ignored_by_default(self):
         self.assertIn(1559792130434670642, discord_bot.IGNORED_IDS)
