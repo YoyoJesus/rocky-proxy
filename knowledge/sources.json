@@ -1096,35 +1096,43 @@
   },
   {
     "url": "https://csi.cs.kent.edu/",
-    "title": "CS 13011 / CS 13012 Computer Science IA and IB (CS I) course page: instructor, office hours, lectures, labs (page lists Fall 2025)"
+    "title": "CS 13011 / CS 13012 Computer Science IA and IB (CS I) course page: instructor, office hours, lectures, labs (page lists Fall 2025)",
+    "refresh_hours": 1
   },
   {
     "url": "https://data-structures.cs.kent.edu/",
-    "title": "CS 23001 Computer Science II: Data Structures and Abstraction (CS II) course page: instructor, lecture time and room, links"
+    "title": "CS 23001 Computer Science II: Data Structures and Abstraction (CS II) course page: instructor, lecture time and room, links",
+    "refresh_hours": 1
   },
   {
     "url": "https://data-structures.cs.kent.edu/calendar.html",
-    "title": "CS 23001 CS II course calendar: exam dates, final exam, no-lecture days"
+    "title": "CS 23001 CS II course calendar: exam dates, final exam, no-lecture days",
+    "refresh_hours": 1
   },
   {
     "url": "https://data-structures.cs.kent.edu/schedule.html",
-    "title": "CS 23001 CS II lecture topics and textbook chapters"
+    "title": "CS 23001 CS II lecture topics and textbook chapters",
+    "refresh_hours": 1
   },
   {
     "url": "https://data-structures.cs.kent.edu/labs/index.html",
-    "title": "CS 23001 CS II labs: weekly labs, lab exams, due dates"
+    "title": "CS 23001 CS II labs: weekly labs, lab exams, due dates",
+    "refresh_hours": 1
   },
   {
     "url": "https://data-structures.cs.kent.edu/resources.html",
-    "title": "CS 23001 CS II resources for C++ programmers: books and references"
+    "title": "CS 23001 CS II resources for C++ programmers: books and references",
+    "refresh_hours": 1
   },
   {
     "url": "https://www.cs.kent.edu/~jmaletic/office-hours.html",
-    "title": "Dr. Jonathan I. Maletic schedule and office hours (CS II)"
+    "title": "Dr. Jonathan I. Maletic schedule and office hours (CS II)",
+    "refresh_hours": 1
   },
   {
     "url": "http://antares.cs.kent.edu/~mikhail/classes/cs3/",
-    "title": "CS 44001 / CS 54001 Computer Science III: Programming Patterns (CS III) course page, Dr. Mikhail Nesterenko: office hours, lectures, labs"
+    "title": "CS 44001 / CS 54001 Computer Science III: Programming Patterns (CS III) course page, Dr. Mikhail Nesterenko: office hours, lectures, labs",
+    "refresh_hours": 1
   },
   {
     "url": "http://antares.cs.kent.edu/~mikhail/",
