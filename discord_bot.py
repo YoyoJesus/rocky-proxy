@@ -15,6 +15,7 @@ import aiohttp
 import discord
 
 from secret_env import load_secret
+from hacksu_meetings import MeetingSchedule
 from knowledge_base import retrieve_context
 
 ROCKY_BASE = os.environ.get("ROCKY_BASE", "https://rocky.cs.kent.edu/v1")
@@ -41,6 +42,7 @@ PERSONA_MAX_CHARS = 12000
 CODE_MAX_LINES = int(os.environ.get("BOT_CODE_MAX_LINES", "2"))
 CODE_REMOVED = "*(Code removed: I can explain concepts, but I don't write code.)*"
 CODE_BLOCK = re.compile(r"```[^\n`]*\n?(.*?)(?:```|$)", re.DOTALL)
+LIVE_MEETINGS = os.environ.get("BOT_LIVE_MEETINGS", "1") != "0"
 
 log = logging.getLogger("rocky-bot")
 
@@ -125,6 +127,7 @@ class RockyBot(discord.Client):
         self.bot_streak: defaultdict[int, int] = defaultdict(int)
         self.ready_at: defaultdict[int, float] = defaultdict(float)
         self.locks: defaultdict[int, asyncio.Lock] = defaultdict(asyncio.Lock)
+        self.meetings = MeetingSchedule()
 
     async def setup_hook(self) -> None:
         if KNOWLEDGE_LIMIT > 0 and not KNOWLEDGE_DB.is_file():
@@ -247,7 +250,10 @@ class RockyBot(discord.Client):
                 )
         except (sqlite3.Error, OSError):
             log.exception("Knowledge search failed; answering without references")
-        today = datetime.now(ZoneInfo("America/New_York")).date().isoformat()
+        now = datetime.now(ZoneInfo("America/New_York")).date()
+        today = now.isoformat()
+        if LIVE_MEETINGS and (schedule := await self.meetings.get(now)):
+            context = schedule + ("\n\n" + context if context else "")
         guild = getattr(trigger, "guild", None)
         where = f'the "{guild.name}" Discord server, in #{trigger.channel}' if guild else "a direct message"
         persona = load_persona()

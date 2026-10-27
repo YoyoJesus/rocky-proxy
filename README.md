@@ -69,6 +69,7 @@ The examples target `qwen3.8-27b`. If Rocky's model changes, check `GET /v1/mode
 | `BOT_MAX_BOT_TURNS` | `5` replies to bots before a human speaks |
 | `BOT_COOLDOWN`      | `5` seconds per channel                   |
 | `BOT_CODE_MAX_LINES` | `2` lines allowed in a code block        |
+| `BOT_LIVE_MEETINGS` | `1`; `0` stops adding the current HacKSU schedule (hacksu.com, cached 1 hour) |
 | `BOT_CREATOR_ID`    | Discord user ID labeled as the creator    |
 | `BOT_IGNORE_IDS`    | Discord user IDs that never trigger a reply (default: ducksu) |
 | `BOT_FACTS_FILE`    | `bot_facts.md` beside the bot script      |

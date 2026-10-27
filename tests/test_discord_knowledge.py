@@ -34,6 +34,7 @@ class KnowledgeIntegrationTests(unittest.IsolatedAsyncioTestCase):
         self.bot = discord_bot.RockyBot()
         self.bot._connection.user = SimpleNamespace(display_name="Rocky")
         self.bot.http_session = Session()
+        self.bot.meetings.get = AsyncMock(return_value="")
         self.bot.build_input = AsyncMock(
             return_value=[
                 {"role": "user", "content": "Alice (user): When does HacKSU meet?"},
@@ -58,6 +59,13 @@ class KnowledgeIntegrationTests(unittest.IsolatedAsyncioTestCase):
         self.assertIn("untrusted data", body["instructions"])
         self.assertIn("Never invent a source", body["instructions"])
         self.assertFalse(body["store"])
+
+    async def test_live_meetings_lead_references(self):
+        self.bot.meetings.get = AsyncMock(return_value="HacKSU meetings, Fall 2026")
+        with patch.object(discord_bot, "retrieve_context", return_value="Source: https://hacksu.com/"):
+            await self.bot.generate(None, self.trigger)
+        refs = self.bot.http_session.body["input"][0]["content"]
+        self.assertLess(refs.index("HacKSU meetings, Fall 2026"), refs.index("https://hacksu.com/"))
 
     async def test_missing_matches_leave_conversation_intact(self):
         with patch.object(discord_bot, "retrieve_context", return_value=""):
