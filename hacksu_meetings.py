@@ -1,21 +1,13 @@
-"""Current HacKSU meeting schedule from hacksu.com, cached so the bot always sees the current semester."""
+"""Current HacKSU meeting schedule from hacksu.com, parsed down to the current semester."""
 
-import asyncio
 import html
-import logging
 import re
-import time
 from dataclasses import dataclass
 from datetime import date, datetime
 
-import aiohttp
-
 MEETINGS_URL = "https://hacksu.com/meetings"
 HOME_URL = "https://hacksu.com"
-CACHE_SECONDS = 3600
 SHOW_PAST = 2
-
-log = logging.getLogger("rocky-bot")
 
 DATE = r"([A-Z][a-z]+ \d{1,2}, \d{4})"
 SECTION = re.compile(r'<section class="meeting-group[^"]*"[^>]*>(.*?)</section>', re.DOTALL)
@@ -89,36 +81,3 @@ def format_schedule(semester: str, meetings: list[Meeting], next_meeting: str, t
         lines += ["Recent past:", *map(line, past)]
     return "\n".join(lines)
 
-
-class MeetingSchedule:
-    def __init__(self) -> None:
-        self.semester = ""
-        self.meetings: list[Meeting] = []
-        self.next_meeting = ""
-        self.fetched = 0.0
-        self.lock = asyncio.Lock()
-
-    async def refresh(self) -> None:
-        timeout = aiohttp.ClientTimeout(total=10)
-        headers = {"User-Agent": "RockyBot (Kent State CS Discord bot)"}
-        async with aiohttp.ClientSession(timeout=timeout, headers=headers) as session:
-            pages = []
-            for url in (MEETINGS_URL, HOME_URL):
-                async with session.get(url) as r:
-                    r.raise_for_status()
-                    pages.append(await r.text())
-        semester, meetings = parse_meetings(pages[0])
-        if meetings:
-            self.semester, self.meetings = semester, meetings
-        self.next_meeting = parse_next(pages[1])
-
-    async def get(self, today: date) -> str:
-        async with self.lock:
-            if time.monotonic() - self.fetched > CACHE_SECONDS:
-                # Back off on failure too; stale data beats stalling every reply on a dead site.
-                self.fetched = time.monotonic()
-                try:
-                    await self.refresh()
-                except (aiohttp.ClientError, TimeoutError, ValueError):
-                    log.warning("HacKSU meeting schedule fetch failed; using cached copy", exc_info=True)
-        return format_schedule(self.semester, self.meetings, self.next_meeting, today)

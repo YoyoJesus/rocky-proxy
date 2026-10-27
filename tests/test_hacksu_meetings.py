@@ -59,21 +59,5 @@ class MeetingTests(unittest.TestCase):
         self.assertEqual(hm.format_schedule("", [], "", date(2026, 1, 1)), "")
 
 
-class CacheTests(unittest.IsolatedAsyncioTestCase):
-    async def test_failed_fetch_keeps_last_schedule(self):
-        schedule = hm.MeetingSchedule()
-        schedule.semester, schedule.meetings = hm.parse_meetings(PAGE)
-
-        async def fail():
-            raise TimeoutError
-
-        schedule.refresh = fail
-        with self.assertLogs("rocky-bot", level="WARNING"):
-            text = await schedule.get(date(2026, 10, 26))
-        self.assertIn("Express.js", text)
-        schedule.refresh = None  # cached now; must not refetch
-        await schedule.get(date(2026, 10, 26))
-
-
 if __name__ == "__main__":
     unittest.main()

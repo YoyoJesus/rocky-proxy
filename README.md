@@ -69,7 +69,7 @@ The examples target `qwen3.8-27b`. If Rocky's model changes, check `GET /v1/mode
 | `BOT_MAX_BOT_TURNS` | `5` replies to bots before a human speaks |
 | `BOT_COOLDOWN`      | `5` seconds per channel                   |
 | `BOT_CODE_MAX_LINES` | `2` lines allowed in a code block        |
-| `BOT_LIVE_MEETINGS` | `1`; `0` stops adding the current HacKSU schedule (hacksu.com, cached 1 hour) |
+| `BOT_LIVE_INFO`     | `1`; `0` stops adding live schedules (see below) |
 | `BOT_CREATOR_ID`    | Discord user ID labeled as the creator    |
 | `BOT_IGNORE_IDS`    | Discord user IDs that never trigger a reply (default: ducksu) |
 | `BOT_FACTS_FILE`    | `bot_facts.md` beside the bot script      |
@@ -109,16 +109,23 @@ and is ignored by Git. Importing knowledge does not need Discord or Rocky creden
 Kent State, HacKSU (including subdomains), `khe.io`, GitHub and GitHub raw-file hosts are allowed
 by default. For another trusted public host, pass
 `--allow-host example.org` on refresh or set `KNOWLEDGE_ALLOWED_HOSTS` to a comma-separated list.
-Each redirect must also remain on an allowed public HTTPS host.
+Each redirect must also remain on an allowed public HTTPS host. Exact hostnames in `KNOWLEDGE_HTTP_HOSTS`
+(comma-separated) may use plain HTTP instead; `antares.cs.kent.edu`, whose certificate is for another host, is
+included by default for the tutoring schedule.
 Hosts must resolve to public addresses, except exact hostnames in `KNOWLEDGE_PRIVATE_HOSTS` (comma-separated),
 which may resolve to private LAN addresses (never loopback or link-local). `web.cs.kent.edu`, which hosts the
 class schedule and only resolves on Kent State's network, is included by default.
 
-Refresh downloads snapshots; the bot does not browse live. Run refresh periodically (for example,
-daily before starting the bot), especially around meeting changes and registration. A failed
-download preserves the last good indexed version. Review refresh output for failures and check
-fetch dates with `status`. No scheduled task is installed. The bot reads the database on each
-answer, so a refresh does not require a restart.
+Refresh downloads snapshots. Each source is re-fetched only once its `refresh_hours` have passed (default 6;
+time-sensitive pages such as schedules use 1, catalog pages and GitHub READMEs 24), so run refresh hourly, for
+example from a systemd timer with `OnCalendar=hourly`. `--force` fetches everything. A failed download preserves
+the last good indexed version. Review refresh output for failures and check fetch dates with `status`. The bot
+reads the database on each answer, so a refresh does not require a restart.
+
+A few small, fast-changing schedules are also fetched by the bot itself, at most hourly, and placed ahead of the
+search results ([live_info.py](live_info.py)): the HacKSU meetings for the current semester (every reply), and the
+CS tutoring schedule and Industry Partnership Seminar Series (when the conversation or search results mention
+them). Upcoming and past are judged from today's date, and a failed or unparseable fetch keeps the last good copy.
 
 | Variable | Default | Purpose |
 | --- | --- | --- |
