@@ -18,6 +18,11 @@ HacKSU club pages, Kent Hack Enough (`khe.io`), and Kent Hack It (`ctf.hacksu.co
   It lists one semester (Fall 2026 when added on October 26, 2026) and enrollment numbers change daily.
   `web.cs.kent.edu` only resolves on Kent State's network (to a private address), so it is the one host in
   `DEFAULT_PRIVATE_HOSTS`; refreshing from off campus fails for it and keeps the last good copy.
+- CS tutoring schedule: `antares.cs.kent.edu/~tutoring/schedule.txt` (plain text, linked from the tutoring page).
+  Its HTTPS certificate names another host, so it is fetched over HTTP via `DEFAULT_HTTP_HOSTS`.
+- Industry connections (added October 27, 2026): `industry.cs.kent.edu`, the career fair and internship guide
+  subdomains, and the seminar speaker registry `industry.cs.kent.edu/seminar/js/data.js`, which the seminar page
+  renders with JavaScript. The seminar page has no time or room; the alumni page is only a Google Form and is skipped.
 - Course descriptions and degree requirements: `catalog.kent.edu`, currently under `/colleges/sh/cs/`.
   Legacy `/colleges/as/cs/` URLs may no longer work. Requirements depend on a student's catalog year;
   these URLs track the current catalog, not every historical catalog.
