@@ -87,11 +87,11 @@ class TempDirCase(unittest.TestCase):
         path.write_text(text, encoding="utf-8")
         return path
 
-    def refresh(self, fetcher=None, sources_json: str | None = None):
+    def refresh(self, fetcher=None, sources_json: str | None = None, force: bool = True):
         if sources_json is not None:
             self.sources.write_text(sources_json, encoding="utf-8")
         return kb.refresh(
-            self.db, sources_path=self.sources, knowledge_dir=self.kdir, allowed_hosts=HOSTS, fetcher=fetcher
+            self.db, sources_path=self.sources, knowledge_dir=self.kdir, allowed_hosts=HOSTS, fetcher=fetcher, force=force
         )
 
     def doc_ids(self) -> list[str]:
@@ -395,6 +395,28 @@ class IngestionTests(TempDirCase):
 class RefreshSemanticsTests(TempDirCase):
     MANIFEST = '[{"url": "https://kent.edu/a", "title": "A"}, {"url": "https://kent.edu/b", "title": "B"}]'
 
+    def test_pages_are_only_refetched_when_due(self):
+        manifest = '[{"url": "https://kent.edu/a", "title": "A"}, {"url": "https://kent.edu/b", "refresh_hours": 0}]'
+        self.refresh(html_fetcher(self.page("Zebra policy text.")), manifest, force=False)
+        fetched = []
+
+        def tracking(url, hosts):
+            fetched.append(url)
+            return html_fetcher(self.page("Zebra policy text."))(url, hosts)
+
+        report = self.refresh(tracking, force=False)
+        self.assertEqual(fetched, ["https://kent.edu/b"])
+        self.assertEqual(report.web_skipped, 1)
+        self.assertEqual(report.web_removed, 0)
+        fetched.clear()
+        self.refresh(tracking)
+        self.assertEqual(sorted(fetched), ["https://kent.edu/a", "https://kent.edu/b"])
+
+    def test_invalid_refresh_hours_rejected(self):
+        for bad in ('"6"', "-1", "true"):
+            with self.assertRaises(kb.ManifestError):
+                self.refresh(sources_json=f'[{{"url": "https://kent.edu/a", "refresh_hours": {bad}}}]')
+
     def page(self, body: str) -> str:
         return f"<body><main><h1>Topic</h1><p>{body}</p></main></body>"
 
@@ -693,6 +715,16 @@ class UrlSafetyTests(unittest.TestCase):
         with patch.dict(os.environ, {kb.PRIVATE_HOSTS_ENV: "intranet.kent.edu"}):
             kb.validate_url("https://intranet.kent.edu/", HOSTS, private_resolver)
             self.assertIn("web.cs.kent.edu", kb.configured_private_hosts())
+
+    def test_http_exception_is_exact(self):
+        url = "http://antares.cs.kent.edu/~tutoring/schedule.txt"
+        self.assertEqual(self.check(url), url)
+        self.assertEqual(self.check("http://antares.cs.kent.edu:80/x"), "http://antares.cs.kent.edu:80/x")
+        for bad in ("http://x.antares.cs.kent.edu/", "http://cs.kent.edu/", "http://antares.cs.kent.edu:8080/"):
+            with self.subTest(url=bad), self.assertRaises(kb.FetchError):
+                self.check(bad)
+        with patch.dict(os.environ, {kb.HTTP_HOSTS_ENV: "old.kent.edu"}):
+            self.check("http://old.kent.edu/")
 
     def test_rejections(self):
         bad = [

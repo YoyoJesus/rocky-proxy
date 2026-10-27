@@ -38,19 +38,23 @@ ALLOWED_HOSTS_ENV = "KNOWLEDGE_ALLOWED_HOSTS"
 # Exact hostnames that only resolve on Kent State's network; they may use private LAN addresses.
 DEFAULT_PRIVATE_HOSTS = ("web.cs.kent.edu",)
 PRIVATE_HOSTS_ENV = "KNOWLEDGE_PRIVATE_HOSTS"
+# Exact hostnames fetched over plain HTTP because their HTTPS certificate is broken (antares serves another host's).
+DEFAULT_HTTP_HOSTS = ("antares.cs.kent.edu",)
+HTTP_HOSTS_ENV = "KNOWLEDGE_HTTP_HOSTS"
 
 CHUNK_VERSION = 5
 CHUNK_MAX_CHARS = 1200
 FOLD_MAX_CHARS = 300
 MAX_CHUNKS_PER_DOC = 500
 MAX_SOURCES = 400
+DEFAULT_REFRESH_HOURS = 6.0
 MAX_FILE_BYTES = 1_000_000
 MAX_FETCH_BYTES = 2_000_000
 FETCH_TIMEOUT = (5, 15)
 FETCH_DEADLINE = 30.0
 MAX_REDIRECTS = 3
 USER_AGENT = "rocky-knowledge-bot/1.0 (+local retrieval; no crawling)"
-ACCEPTED_TYPES = {"text/html", "application/xhtml+xml", "text/plain", "text/markdown"}
+ACCEPTED_TYPES = {"text/html", "application/xhtml+xml", "text/plain", "text/markdown", "text/javascript"}
 SKIPPED_MARKDOWN = {"sources.md", "readme.md"}
 
 MAX_QUERY_CHARS = 2000
@@ -623,10 +627,17 @@ def configured_allowed_hosts(extra: Iterable[str] = ()) -> tuple[str, ...]:
     return tuple(dict.fromkeys(h for h in hosts if h))
 
 
-def configured_private_hosts() -> tuple[str, ...]:
-    env = os.environ.get(PRIVATE_HOSTS_ENV, "").split(",")
-    hosts = [h.strip().lower().strip(".") for h in (*DEFAULT_PRIVATE_HOSTS, *env)]
+def _exact_hosts(defaults: Iterable[str], env_name: str) -> tuple[str, ...]:
+    hosts = [h.strip().lower().strip(".") for h in (*defaults, *os.environ.get(env_name, "").split(","))]
     return tuple(dict.fromkeys(h for h in hosts if h))
+
+
+def configured_private_hosts() -> tuple[str, ...]:
+    return _exact_hosts(DEFAULT_PRIVATE_HOSTS, PRIVATE_HOSTS_ENV)
+
+
+def configured_http_hosts() -> tuple[str, ...]:
+    return _exact_hosts(DEFAULT_HTTP_HOSTS, HTTP_HOSTS_ENV)
 
 
 def _allowed_address(address: str, private_ok: bool) -> bool:
@@ -642,7 +653,8 @@ def _allowed_address(address: str, private_ok: bool) -> bool:
 def validate_url(url: str, allowed_hosts: Sequence[str], resolver: Resolver = socket.getaddrinfo) -> str:
     """Check that url is a plain HTTPS URL on an allowlisted host that resolves only to public addresses.
 
-    Hosts listed exactly in configured_private_hosts() may also resolve to private LAN addresses.
+    Hosts listed exactly in configured_private_hosts() may also resolve to private LAN addresses, and hosts
+    listed exactly in configured_http_hosts() may use plain HTTP on port 80.
 
     Returns the URL without its fragment. Raises FetchError otherwise.
     """
@@ -652,12 +664,12 @@ def validate_url(url: str, allowed_hosts: Sequence[str], resolver: Resolver = so
     except ValueError as exc:
         raise FetchError(f"invalid URL: {exc}") from exc
     host = (parts.hostname or "").lower().rstrip(".")
-    if parts.scheme != "https":
+    if not (parts.scheme == "https" or (parts.scheme == "http" and host in configured_http_hosts())):
         raise FetchError("only https URLs are allowed")
     if not host or parts.username is not None or parts.password is not None:
         raise FetchError("URL must have a host and no credentials")
-    if port not in (None, 443):
-        raise FetchError("only the default HTTPS port is allowed")
+    if port not in (None, 443 if parts.scheme == "https" else 80):
+        raise FetchError("only the default port is allowed")
     try:
         ipaddress.ip_address(host)
     except ValueError:
@@ -784,10 +796,11 @@ def fetch_url(
 class Source:
     url: str
     title: str | None
+    refresh_hours: float = DEFAULT_REFRESH_HOURS
 
 
 def load_manifest(path: Path) -> list[Source]:
-    """Parse a JSON array of {url, title}. Any malformed entry rejects the whole file."""
+    """Parse a JSON array of {url, title, refresh_hours}. Any malformed entry rejects the whole file."""
     try:
         data = json.loads(path.read_text(encoding="utf-8-sig"))
     except (OSError, ValueError) as exc:
@@ -800,10 +813,13 @@ def load_manifest(path: Path) -> list[Source]:
     for i, entry in enumerate(data):
         url = entry.get("url") if isinstance(entry, dict) else None
         title = entry.get("title") if isinstance(entry, dict) else None
+        hours = entry.get("refresh_hours", DEFAULT_REFRESH_HOURS) if isinstance(entry, dict) else None
         if not isinstance(url, str) or not url.strip() or not (title is None or isinstance(title, str)):
             raise ManifestError(f"manifest entry {i} needs a string 'url' and optional string 'title'")
+        if isinstance(hours, bool) or not isinstance(hours, (int, float)) or hours < 0:
+            raise ManifestError(f"manifest entry {i} has an invalid 'refresh_hours'")
         url = urlunsplit(urlsplit(url.strip())._replace(fragment=""))
-        sources.setdefault(url, Source(url, _collapse(title)[:200] if title and title.strip() else None))
+        sources.setdefault(url, Source(url, _collapse(title)[:200] if title and title.strip() else None, float(hours)))
     return list(sources.values())
 
 
@@ -815,6 +831,7 @@ class RefreshReport:
     web_updated: int = 0
     web_unchanged: int = 0
     web_removed: int = 0
+    web_skipped: int = 0
     failures: list[tuple[str, str]] = field(default_factory=list)
     notes: list[str] = field(default_factory=list)
 
@@ -861,10 +878,18 @@ def _import_web(
     allowed_hosts: Sequence[str],
     fetcher: Fetcher,
     report: RefreshReport,
+    force: bool = False,
 ) -> None:
     wanted = {f"web:{s.url}" for s in sources}
+    attempted = {r["id"]: r["last_attempt"] for r in conn.execute("SELECT id, last_attempt FROM documents")}
+    now = datetime.now(UTC)
     for source in sources:
         doc_id = f"web:{source.url}"
+        last = attempted.get(doc_id)
+        # Small slack so an hourly timer does not skip a 1-hour source that finished a few seconds late last time.
+        if not force and last and (now - datetime.fromisoformat(last)).total_seconds() < source.refresh_hours * 3600 - 300:
+            report.web_skipped += 1
+            continue
         try:
             page = fetcher(source.url, allowed_hosts)
             if page.content_type in {"text/html", "application/xhtml+xml"}:
@@ -895,8 +920,12 @@ def refresh(
     knowledge_dir: str | Path = DEFAULT_KNOWLEDGE_DIR,
     allowed_hosts: Sequence[str] | None = None,
     fetcher: Fetcher | None = None,
+    force: bool = False,
 ) -> RefreshReport:
     """Re-import markdown files and manifest pages.
+
+    A page is only re-fetched once its refresh_hours (default DEFAULT_REFRESH_HOURS) have passed since the last
+    attempt, so this can run often; force fetches every page.
 
     A failed fetch or unreadable file keeps the previous good content. Chunks of a document that was
     successfully re-imported are replaced, and documents that no longer exist in the knowledge dir or
@@ -914,7 +943,7 @@ def refresh(
         else:
             report.notes.append(f"knowledge dir not found, skipped files: {knowledge_dir}")
         if sources is not None:
-            _import_web(conn, sources, hosts, fetcher, report)
+            _import_web(conn, sources, hosts, fetcher, report, force)
         else:
             report.notes.append(f"manifest not found, skipped web sources: {sources_path}")
     return report
@@ -1086,13 +1115,16 @@ def knowledge_status(db_path: str | Path) -> dict | None:
 def _cmd_refresh(args: argparse.Namespace) -> int:
     hosts = configured_allowed_hosts(args.allow_host)
     try:
-        report = refresh(args.db, sources_path=args.sources, knowledge_dir=args.knowledge_dir, allowed_hosts=hosts)
+        report = refresh(
+            args.db, sources_path=args.sources, knowledge_dir=args.knowledge_dir, allowed_hosts=hosts, force=args.force
+        )
     except KnowledgeError as exc:
         print(f"refresh aborted: {exc}", file=sys.stderr)
         return 1
     print(
         f"files: {report.files_updated} updated, {report.files_unchanged} unchanged, {report.files_removed} removed\n"
-        f"web: {report.web_updated} updated, {report.web_unchanged} unchanged, {report.web_removed} removed"
+        f"web: {report.web_updated} updated, {report.web_unchanged} unchanged, {report.web_removed} removed, "
+        f"{report.web_skipped} not due"
     )
     for note in report.notes:
         print(f"note: {note}")
@@ -1139,6 +1171,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     p_refresh.add_argument("--sources", default=DEFAULT_SOURCES)
     p_refresh.add_argument("--knowledge-dir", default=DEFAULT_KNOWLEDGE_DIR)
     p_refresh.add_argument("--db", default=DEFAULT_DB)
+    p_refresh.add_argument("--force", action="store_true", help="fetch every page, even if not due")
     p_refresh.add_argument("--allow-host", action="append", default=[], help="extra allowlisted host (repeatable)")
     p_refresh.set_defaults(func=_cmd_refresh)
     p_search = sub.add_parser("search", help="search the knowledge base")
