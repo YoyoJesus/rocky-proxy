@@ -23,6 +23,9 @@ HacKSU club pages, Kent Hack Enough (`khe.io`), and Kent Hack It (`ctf.hacksu.co
   (`data-structures.cs.kent.edu` plus its calendar, topics, labs and resources pages, and Dr. Maletic's office
   hours), and CS III (`antares.cs.kent.edu/~mikhail/classes/cs3/`). Dr. Nesterenko's antares homepage is old
   (its office differs from the CS III page) and is titled as possibly outdated. Project specs are not indexed.
+- Dr. Nesterenko's antares pages: research and publications, the Distributed Algorithms and Systems Seminar and
+  its reading list, past courses, and his personal pages (books, quotes, movies, story titles; some in Russian,
+  KOI8-R). Skipped: department staff and systems meeting minutes, and his retired Kansas State sysadmin page.
 - Industry connections (added October 27, 2026): `industry.cs.kent.edu`, the career fair and internship guide
   subdomains, and the seminar speaker registry `industry.cs.kent.edu/seminar/js/data.js`, which the seminar page
   renders with JavaScript. The seminar page has no time or room; the alumni page is only a Google Form and is skipped.

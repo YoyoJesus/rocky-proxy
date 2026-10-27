@@ -1158,5 +1158,50 @@
     "url": "http://antares.cs.kent.edu/~mikhail/classes/cs3/schedule.txt",
     "title": "CS 44001 / CS 54001 CS III tentative quiz, midterm, and final exam schedule",
     "refresh_hours": 1
+  },
+  {
+    "url": "http://antares.cs.kent.edu/~mikhail/Research/",
+    "title": "Dr. Mikhail Nesterenko research and publications (distributed algorithms, blockchain, simulation)",
+    "refresh_hours": 24
+  },
+  {
+    "url": "http://antares.cs.kent.edu/~seminar/",
+    "title": "Distributed Algorithms and Systems Seminar (Dr. Mikhail Nesterenko)",
+    "refresh_hours": 24
+  },
+  {
+    "url": "http://antares.cs.kent.edu/~mikhail/Research/Seminar/readinglist.html",
+    "title": "Distributed Algorithms and Systems Seminar background reading list (Dr. Mikhail Nesterenko)",
+    "refresh_hours": 24
+  },
+  {
+    "url": "http://antares.cs.kent.edu/~mikhail/classes/oldclasses.html",
+    "title": "Dr. Mikhail Nesterenko past courses taught by semester (CS I, CS III)",
+    "refresh_hours": 24
+  },
+  {
+    "url": "http://antares.cs.kent.edu/~mikhail/Personal/",
+    "title": "Dr. Mikhail Nesterenko personal page: books, quotes, stories, movies",
+    "refresh_hours": 24
+  },
+  {
+    "url": "http://antares.cs.kent.edu/~mikhail/Personal/books.html",
+    "title": "Books read by Dr. Mikhail Nesterenko",
+    "refresh_hours": 24
+  },
+  {
+    "url": "http://antares.cs.kent.edu/~mikhail/Personal/quotes.html",
+    "title": "Quotes collected by Dr. Mikhail Nesterenko",
+    "refresh_hours": 24
+  },
+  {
+    "url": "http://antares.cs.kent.edu/~mikhail/Personal/movies.txt",
+    "title": "Movies list by Dr. Mikhail Nesterenko",
+    "refresh_hours": 24
+  },
+  {
+    "url": "http://antares.cs.kent.edu/~mikhail/Personal/Stories/",
+    "title": "Stories by Dr. Mikhail Nesterenko (index of story titles, English and Russian)",
+    "refresh_hours": 24
   }
 ]
