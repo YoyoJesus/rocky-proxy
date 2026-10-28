@@ -104,7 +104,8 @@ class LiveSource:
     render: Callable[[list[str], date], str]
     when: re.Pattern | None = None  # only sent when the conversation matches; None means always
     pages: list[str] = field(default_factory=list)
-    fetched: float = 0.0
+    # monotonic() counts from boot, so 0 would skip the first fetch for an hour after a reboot.
+    fetched: float = float("-inf")
     lock: asyncio.Lock = field(default_factory=asyncio.Lock)
 
     async def fetch(self, session: aiohttp.ClientSession) -> list[str]:

@@ -1,6 +1,7 @@
 import re
 import unittest
 from datetime import date
+from unittest.mock import patch
 
 import live_info
 
@@ -101,7 +102,7 @@ class CacheTests(unittest.IsolatedAsyncioTestCase):
         source = Source(["first", TimeoutError()])
         info = live_info.LiveInfo([source])
         await info.get("q", TODAY)
-        source.fetched = 0
+        source.fetched = float("-inf")
         with self.assertLogs("rocky-bot", level="WARNING"):
             self.assertEqual(await info.get("q", TODAY), "first")
 
@@ -109,8 +110,13 @@ class CacheTests(unittest.IsolatedAsyncioTestCase):
         source = Source(["first", ""])
         info = live_info.LiveInfo([source])
         await info.get("q", TODAY)
-        source.fetched = 0
+        source.fetched = float("-inf")
         self.assertEqual(await info.get("q", TODAY), "first")
+
+    async def test_first_fetch_soon_after_boot(self):
+        source = Source(["first"])
+        with patch.object(live_info.time, "monotonic", return_value=60.0):
+            self.assertEqual(await live_info.LiveInfo([source]).get("q", TODAY), "first")
 
     async def test_only_matching_sources_are_sent(self):
         always, tutoring = Source(["meetings"]), Source(["tutoring"], re.compile("tutor", re.I))
