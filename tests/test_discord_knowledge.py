@@ -227,6 +227,35 @@ class KnowledgeIntegrationTests(unittest.IsolatedAsyncioTestCase):
         too_big.read.assert_not_called()
         too_wide.read.assert_not_called()
 
+    async def test_only_reference_images_survive(self):
+        photo = "![Photograph of Professor Lei Xu](https://www-s3-live.kent.edu/xu.jpg)"
+        answer = f"Here is Dr. Xu:\n{photo}\n![x](https://evil.example/a.png)"
+
+        class Post:
+            async def __aenter__(self):
+                return SimpleNamespace(status=200, json=AsyncMock(return_value={"output_text": answer}))
+
+            async def __aexit__(self, *args):
+                pass
+
+        self.bot.http_session.post = lambda url, *, json: Post()
+        with patch.object(discord_bot, "retrieve_context", return_value=f"Source: https://www.kent.edu/cs/lei-xu\n{photo}"):
+            reply = await self.bot.generate(None, self.trigger)
+        self.assertEqual(reply, f"Here is Dr. Xu:\n{photo}")
+
+    async def test_reply_images_become_embeds(self):
+        self.bot.generate = AsyncMock(return_value="Dr. Xu:\n![Photo](https://www-s3-live.kent.edu/xu.jpg)")
+        channel = SimpleNamespace(id=6, send=AsyncMock(), typing=lambda: Typing())
+        message = SimpleNamespace(
+            author=SimpleNamespace(id=2, bot=False), channel=channel, content="rocky?", clean_content="rocky?",
+            attachments=[], mentions=[], reference=None, guild=None, reply=AsyncMock(),
+        )  # fmt: skip
+        with patch.object(discord_bot, "COOLDOWN", 0), patch.object(discord_bot.discord, "DMChannel", SimpleNamespace):
+            await self.bot.on_message(message)
+        self.assertEqual(message.reply.call_args.args[0], "Dr. Xu:")
+        embeds = channel.send.call_args.kwargs["embeds"]
+        self.assertEqual([e.image.url for e in embeds], ["https://www-s3-live.kent.edu/xu.jpg"])
+
     def test_ducksu_ignored_by_default(self):
         self.assertIn(1559792130434670642, discord_bot.IGNORED_IDS)
 

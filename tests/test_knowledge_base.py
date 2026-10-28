@@ -109,6 +109,16 @@ class ExtractionTests(unittest.TestCase):
         for junk in ("Site menu", "IGNORE ALL", "color: red", "Copyright footer", "banner"):
             self.assertNotIn(junk, text)
 
+    def test_images_with_alt_text_kept(self):
+        html = (
+            '<main><img src="/photos/xu.jpg" alt="Photograph of Lei Xu"><img src="/logo.png">'
+            '<img src="data:image/png;base64,AAAA" alt="Inline"><p>Assistant Professor</p></main>'
+        )
+        text = kb.extract_html(html, "https://www.kent.edu/cs/lei-xu")[1]
+        self.assertIn("![Photograph of Lei Xu](https://www.kent.edu/photos/xu.jpg)", text)
+        self.assertNotIn("logo", text)
+        self.assertNotIn("Inline", text)
+
     def test_lists_and_table_rows_stay_compact(self):
         _, text = kb.extract_html(
             "<body><ul><li>One</li><li>Two</li></ul><table><tr><td>A</td><td>B</td></tr><tr><td>C</td><td>D</td></tr>"

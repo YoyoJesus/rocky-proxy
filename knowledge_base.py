@@ -164,6 +164,10 @@ class _TextExtractor(HTMLParser):
                 self._emit(" " if self._heading else "\n")
             elif tag == "hr":
                 self._emit("\n\n")
+            # Kept so the bot can show it in a reply, e.g. a faculty profile photo. data: URLs are dropped.
+            elif tag == "img" and (alt := _collapse(a.get("alt", "")).replace("]", "")):
+                if (src := self._clean_href(a.get("src", ""))).startswith(("http://", "https://")):
+                    self._emit(f"\n![{alt}]({src.replace(')', '%29')})\n")
             return
         classes = set(a.get("class", "").lower().split()) | {a.get("id", "").lower()}
         skip = (
