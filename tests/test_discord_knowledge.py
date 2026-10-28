@@ -1,5 +1,6 @@
 """Offline checks of the references actually sent to Rocky."""
 
+import base64
 import sqlite3
 import tempfile
 import unittest
@@ -187,12 +188,16 @@ class KnowledgeIntegrationTests(unittest.IsolatedAsyncioTestCase):
 
     async def test_images_and_custom_emojis_reach_model(self):
         del self.bot.build_input
-        self.bot.http = SimpleNamespace(get_from_cdn=AsyncMock(return_value=b"emoji"))
+        emoji_bytes, shot_bytes = b"RIFF\0\0\0\0WEBPemoji", b"\xff\xd8\xffshot"
+        self.bot.http = SimpleNamespace(get_from_cdn=AsyncMock(return_value=emoji_bytes))
         author = SimpleNamespace(display_name="Alice", bot=False)
+        # Declared PNG but actually JPEG: the data URL must carry the real type.
         shot = SimpleNamespace(content_type="image/png", size=5, width=10, height=10, filename="a.png",
-                               read=AsyncMock(return_value=b"shot"))  # fmt: skip
+                               read=AsyncMock(return_value=shot_bytes))  # fmt: skip
+        gif = SimpleNamespace(content_type="image/png", size=5, width=1, height=1, filename="c.png",
+                              read=AsyncMock(return_value=b"GIF89a..."))  # fmt: skip
         pdf = SimpleNamespace(content_type="application/pdf", size=5, width=None, height=None, filename="b.pdf")
-        trigger = SimpleNamespace(id=1, clean_content="rocky what is this <:hacksu:42>", attachments=[shot, pdf],
+        trigger = SimpleNamespace(id=1, clean_content="rocky what is this <:hacksu:42>", attachments=[shot, gif, pdf],
                                   author=author)  # fmt: skip
 
         async def history(**kwargs):
@@ -205,7 +210,10 @@ class KnowledgeIntegrationTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(content[0]["type"], "input_text")
         self.assertIn("[attachment: b.pdf]", content[0]["text"])
         urls = [part["image_url"] for part in content[1:]]
-        self.assertEqual(urls, ["data:image/png;base64,c2hvdA==", "data:image/png;base64,ZW1vamk="])
+        self.assertEqual(urls, [
+            "data:image/jpeg;base64," + base64.b64encode(shot_bytes).decode(),
+            "data:image/webp;base64," + base64.b64encode(emoji_bytes).decode(),
+        ])  # fmt: skip
         self.bot.http.get_from_cdn.assert_awaited_once_with("https://cdn.discordapp.com/emojis/42.png")
         self.assertIn("custom Discord emojis", self.bot.http_session.body["instructions"])
 
@@ -214,7 +222,7 @@ class KnowledgeIntegrationTests(unittest.IsolatedAsyncioTestCase):
 
         def image(size, pixels=1):
             return SimpleNamespace(content_type="image/jpeg", size=size, width=pixels, height=1,
-                                   read=AsyncMock(return_value=b"x" * size))  # fmt: skip
+                                   read=AsyncMock(return_value=b"\xff\xd8\xff".ljust(size, b"x")))  # fmt: skip
 
         too_big = image(discord_bot.MAX_IMAGE_BYTES + 1)
         too_wide = image(10, discord_bot.MAX_IMAGE_PIXELS + 1)

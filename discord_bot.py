@@ -46,7 +46,6 @@ CODE_BLOCK = re.compile(r"```[^\n`]*\n?(.*?)(?:```|$)", re.DOTALL)
 LIVE_INFO = os.environ.get("BOT_LIVE_INFO", "1") != "0"
 # Rocky takes up to 4 images as base64 data URLs (JPEG, PNG, WebP), 4 MiB each and 6 MiB total. Raw bytes are
 # capped below that so the limits hold even if Rocky counts the base64 text.
-IMAGE_TYPES = {"image/png", "image/jpeg", "image/webp"}
 MAX_IMAGES = 4
 MAX_IMAGE_BYTES = 3_000_000
 MAX_IMAGE_TOTAL_BYTES = 4_500_000
@@ -118,6 +117,17 @@ def expand_nicknames(query: str, facts: str) -> str:
     """Prepend full names for nicknames defined in the facts file, e.g. '"Nesty" means Dr. Mikhail Nesterenko'."""
     names = [full.strip() for nick, full in NICKNAME.findall(facts) if re.search(rf"\b{re.escape(nick)}\b", query, re.I)]
     return " ".join([*names, query]) if names else query
+
+
+def image_type(data: bytes) -> str | None:
+    """Media type from the file's magic bytes; Discord's declared type can be wrong, and Rocky checks."""
+    if data.startswith(b"\x89PNG\r\n\x1a\n"):
+        return "image/png"
+    if data.startswith(b"\xff\xd8\xff"):
+        return "image/jpeg"
+    if data[:4] == b"RIFF" and data[8:12] == b"WEBP":
+        return "image/webp"
+    return None
 
 
 def take_images(text: str) -> tuple[str, list[str]]:
@@ -264,9 +274,9 @@ class RockyBot(discord.Client):
             if m.author == self.user:
                 continue
             sources = [
-                (a.content_type.split(";")[0], a.read)
+                a.read
                 for a in m.attachments
-                if (a.content_type or "").split(";")[0] in IMAGE_TYPES
+                if (a.content_type or "").startswith("image/")
                 and a.size <= MAX_IMAGE_BYTES
                 and (a.width or 0) * (a.height or 0) <= MAX_IMAGE_PIXELS
             ]
@@ -274,8 +284,8 @@ class RockyBot(discord.Client):
                 if emoji_id not in seen_emojis:
                     seen_emojis.add(emoji_id)
                     url = f"https://cdn.discordapp.com/emojis/{emoji_id}.png"
-                    sources.append(("image/png", lambda url=url: self.http.get_from_cdn(url)))
-            for mime, read in sources:
+                    sources.append(lambda url=url: self.http.get_from_cdn(url))
+            for read in sources:
                 if count >= MAX_IMAGES:
                     return found
                 try:
@@ -283,7 +293,8 @@ class RockyBot(discord.Client):
                 except (discord.HTTPException, aiohttp.ClientError, TimeoutError):
                     log.warning("Could not download an image from message %s", m.id, exc_info=True)
                     continue
-                if len(data) > MAX_IMAGE_BYTES or total + len(data) > MAX_IMAGE_TOTAL_BYTES:
+                mime = image_type(data)
+                if not mime or len(data) > MAX_IMAGE_BYTES or total + len(data) > MAX_IMAGE_TOTAL_BYTES:
                     continue
                 count, total = count + 1, total + len(data)
                 found.setdefault(m.id, []).append(f"data:{mime};base64,{base64.b64encode(data).decode()}")
