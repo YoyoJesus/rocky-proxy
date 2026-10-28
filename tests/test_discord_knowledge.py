@@ -185,6 +185,48 @@ class KnowledgeIntegrationTests(unittest.IsolatedAsyncioTestCase):
         self.assertTrue(message.reply.call_args.kwargs["suppress_embeds"])
         self.assertTrue(channel.send.call_args.kwargs["suppress_embeds"])
 
+    async def test_images_and_custom_emojis_reach_model(self):
+        del self.bot.build_input
+        self.bot.http = SimpleNamespace(get_from_cdn=AsyncMock(return_value=b"emoji"))
+        author = SimpleNamespace(display_name="Alice", bot=False)
+        shot = SimpleNamespace(content_type="image/png", size=5, width=10, height=10, filename="a.png",
+                               read=AsyncMock(return_value=b"shot"))  # fmt: skip
+        pdf = SimpleNamespace(content_type="application/pdf", size=5, width=None, height=None, filename="b.pdf")
+        trigger = SimpleNamespace(id=1, clean_content="rocky what is this <:hacksu:42>", attachments=[shot, pdf],
+                                  author=author)  # fmt: skip
+
+        async def history(**kwargs):
+            return
+            yield
+
+        with patch.object(discord_bot, "retrieve_context", return_value=""):
+            await self.bot.generate(SimpleNamespace(history=history), trigger)
+        content = self.bot.http_session.body["input"][-1]["content"]
+        self.assertEqual(content[0]["type"], "input_text")
+        self.assertIn("[attachment: b.pdf]", content[0]["text"])
+        urls = [part["image_url"] for part in content[1:]]
+        self.assertEqual(urls, ["data:image/png;base64,c2hvdA==", "data:image/png;base64,ZW1vamk="])
+        self.bot.http.get_from_cdn.assert_awaited_once_with("https://cdn.discordapp.com/emojis/42.png")
+        self.assertIn("custom Discord emojis", self.bot.http_session.body["instructions"])
+
+    async def test_image_limits(self):
+        author = SimpleNamespace(bot=False)
+
+        def image(size, pixels=1):
+            return SimpleNamespace(content_type="image/jpeg", size=size, width=pixels, height=1,
+                                   read=AsyncMock(return_value=b"x" * size))  # fmt: skip
+
+        too_big = image(discord_bot.MAX_IMAGE_BYTES + 1)
+        too_wide = image(10, discord_bot.MAX_IMAGE_PIXELS + 1)
+        old = SimpleNamespace(id=1, clean_content="", author=author, attachments=[image(10)])
+        new = SimpleNamespace(id=2, clean_content="", author=author,
+                              attachments=[too_big, too_wide, *(image(10) for _ in range(4))])  # fmt: skip
+        found = await self.bot.collect_images([old, new])
+        self.assertEqual(list(found), [2])  # newest message fills the four slots first
+        self.assertEqual(len(found[2]), discord_bot.MAX_IMAGES)
+        too_big.read.assert_not_called()
+        too_wide.read.assert_not_called()
+
     def test_ducksu_ignored_by_default(self):
         self.assertIn(1559792130434670642, discord_bot.IGNORED_IDS)
 

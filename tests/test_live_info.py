@@ -1,6 +1,7 @@
 import re
 import unittest
 from datetime import date
+from types import SimpleNamespace
 from unittest.mock import patch
 
 import live_info
@@ -115,7 +116,7 @@ class CacheTests(unittest.IsolatedAsyncioTestCase):
 
     async def test_first_fetch_soon_after_boot(self):
         source = Source(["first"])
-        with patch.object(live_info.time, "monotonic", return_value=60.0):
+        with patch.object(live_info, "time", SimpleNamespace(monotonic=lambda: 60.0)):
             self.assertEqual(await live_info.LiveInfo([source]).get("q", TODAY), "first")
 
     async def test_only_matching_sources_are_sent(self):
