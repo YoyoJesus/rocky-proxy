@@ -9,7 +9,11 @@ A local Flask proxy that exposes Kent State's [Rocky](https://rocky.cs.kent.edu)
 | `GET /v1/models`            | `GET /v1/models`      |
 | `POST /v1/chat/completions` | `POST /v1/responses`  |
 
-Buffered and streamed (SSE) completions, text, and base64 image input are supported. Rocky has no tool calling, so requests with `tools`, `functions`, or `tool` messages return a 400. Unsupported fields like `stop` and `seed` are dropped. Requests are sent with `store: false`.
+Buffered and streamed (SSE) completions, text, and base64 image input are supported. Unsupported fields like `stop` and `seed` are dropped. Requests are sent with `store: false`.
+
+Rocky has no native tool calling, so the proxy emulates it when a request includes `tools`: the tool schemas are added to the system prompt, the model replies with `<tool_call>{"name": ..., "arguments": {...}}</tool_call>` blocks, and the proxy returns those as OpenAI `tool_calls`. Earlier tool calls and `tool` results are sent back to Rocky as text. Malformed calls are returned as plain text. Legacy `functions` return a 400.
+
+When Rocky is busy (`model_busy`), rate limited (429), returns a 5xx, or drops the connection before any output, the proxy retries with backoff up to 60 seconds between attempts. Streams retry for as long as the client stays connected and send an SSE comment every 15 seconds while waiting. Buffered requests retry up to 10 times. Errors after output has started, and other 4xx errors, are passed through.
 
 ## Setup
 
@@ -47,6 +51,10 @@ aider
 ```
 
 The examples target `qwen3.8-27b`. If Rocky's model changes, check `GET /v1/models` and update the model id and limits in both files.
+
+## OpenCode
+
+Merge the `rocky` provider from [examples/opencode.json](examples/opencode.json) into `~/.config/opencode/opencode.json(c)`, start the proxy, and pick `rocky/qwen3.8-27b`. The example turns off OpenCode's request and header timeouts so it can wait out a busy Rocky; the proxy's keepalive comments satisfy its chunk timeout. OpenCode's prompt and tool schemas use a large part of the 64k context, and every agent step is a separate Rocky request. The same config makes the model available to tools that run OpenCode, such as T3 Code.
 
 ## Discord bot
 

@@ -1,0 +1,23 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "provider": {
+    "rocky": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "Rocky (Kent State)",
+      "options": {
+        "baseURL": "http://127.0.0.1:8000/v1",
+        "apiKey": "unused",
+        "timeout": false,
+        "headerTimeout": false
+      },
+      "models": {
+        "qwen3.8-27b": {
+          "name": "Qwen3.8 27B (Rocky)",
+          "tool_call": true,
+          "attachment": true,
+          "limit": { "context": 65536, "output": 8192 }
+        }
+      }
+    }
+  }
+}
